@@ -38,6 +38,7 @@ Example Usage
 This is a minimalist example of the SDK in action.
 
 .. code-block:: python
+
     import lingua
 
     # Establish a client connection to the Lingua service
@@ -64,4 +65,4 @@ This is a minimalist example of the SDK in action.
     text_gen.text # display only text
     text_gen.logprobs # display logprobs
     text_gen.tokens # display tokens
-```
+

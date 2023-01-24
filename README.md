@@ -29,14 +29,15 @@ A user toolkit for analyzing and interfacing with Large Language Models (LLMs)
 
 ### Install
 
-Install via PyPI:
+~~Install via PyPI:~~ Coming soon!
 
 ```bash
-python3 -m pip install lingua
+    python3 -m pip install lingua
 ```
 or install from source:
+
 ```bash
-pip install git+https://github.com/VectorInstitute/lingua.git
+    pip install git+https://github.com/VectorInstitute/lingua-sdk.git
 ```
 
 ### Quick Start

@@ -21,6 +21,14 @@ JWT_TOKEN_FILE = Path(Path.home() / '.lingua.jwt')
 class Client:
 
     def __init__(self, gateway_host, gateway_port, auth_key=None):
+        """ Initializes the Lingua client
+
+            Args:
+                gateway_host (str): The host of the gateway service
+                gateway_port (int): The port of the gateway service
+                auth_key (str): The authentication key for the gateway service
+        """
+
         self.gateway_host = gateway_host
         self.gateway_port = gateway_port
         self.base_addr = f"http://{self.gateway_host}:{self.gateway_port}/"
@@ -75,6 +83,12 @@ class Client:
 
 
     def load_model(self, model_name):
+        """Loads a model from the gateway service
+        
+            Args: 
+                model_name (str): The name of the model to load
+        """
+
         if model_name not in self.all_model_names:
             raise ValueError(
                 "asked for model {} but server only supports model "
@@ -98,6 +112,13 @@ class Client:
 class Model():
 
     def __init__(self, client: Client, model_name: str):
+        """ Initializes a model instance
+
+            Args:
+                client (Client): Lingua client that this model belongs to
+                model_name (str): The name of the model
+        """
+
         self.client = client
         self.model_name = model_name
         self.base_addr = f"http://{self.client.gateway_host}:{self.client.gateway_port}/"
@@ -115,7 +136,7 @@ class Model():
             self.client.authenticate()
 
 
-    def generate_text(self, prompt, /, **gen_kwargs):
+    def generate_text(self, prompt, **gen_kwargs):
         """Generates a string of text based on a prompt"""
         self.verify_request()
 

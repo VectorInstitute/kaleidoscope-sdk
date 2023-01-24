@@ -1,16 +1,19 @@
-.. Lingua SDK documentation master file, created by
-   sphinx-quickstart on Tue Jan 24 13:47:39 2023.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Lingua SDK
+==========
 
-Welcome to Lingua SDK's documentation!
-======================================
+Welcome to the **Lingua SDK**!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Contents
 
+   getting_started
+   api
+   configuration
 
+License
+-------
+**Lingua-SDK** is distributed under an MIT License.
 
 Indices and tables
 ==================

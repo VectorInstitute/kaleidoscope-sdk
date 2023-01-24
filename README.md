@@ -12,7 +12,30 @@ A user toolkit for analyzing and interfacing with Large Language Models (LLMs)
 
 ## Overview
 
-``lingua`` provides a few high-level APIs namely:
+## Getting Started
+
+### Install
+
+~~Install via PyPI:~~ Coming soon!
+
+```bash
+    python3 -m pip install pylingua
+```
+or install from source:
+
+```bash
+    pip install git+https://github.com/VectorInstitute/lingua-sdk.git
+```
+
+### Model Interface
+
+> Note: This is a pre-release build and the public API is subject to change.
+
+``lingua`` provides Python SDK for interfacing with LLMs on the Vector cluster and exposes two high-level objects:
+
+
+    * Client: Faciliates authentication and model loading.
+    * Model: Facilitates model interaction.
 
 * `generate_text` - Returns an LLM text generation based on prompt input 
 * `module_names` - Returns all modules in the LLM neural network
@@ -21,30 +44,7 @@ A user toolkit for analyzing and interfacing with Large Language Models (LLMs)
 ``lingua`` is composed of the following components:
 
 * Python SDK - A command line tool wrapping the gateway service API endpoints
-* Web service - A front-end web application tool sending requests to the gateway service
-* Model service - A backend utility that loads models into GPU memory and exposes an interface to recieve requests
 
-
-## Getting Started
-
-### Install
-
-~~Install via PyPI:~~ Coming soon!
-
-```bash
-    python3 -m pip install lingua
-```
-or install from source:
-
-```bash
-    pip install git+https://github.com/VectorInstitute/lingua-sdk.git
-```
-
-### Quick Start
-
-### Retrieve personal auth key from http://llm.cluster.local:3001
-A sample text generation submission from the web may be required to sign-in and generate an updated authentication key.
-![Auth_demo_pic](https://user-images.githubusercontent.com/72175053/210878149-c142e36c-d61b-4b44-984f-3c0f8dec13de.png)
 
 ### Sample
 ```python
@@ -71,7 +71,7 @@ text_gen.tokens # display tokens
 More information can be found on the Lingua documentation site.
 
 ## Contributing
-Contributing to lingua is welcomed. See [Contributing](https://github.com/VectorInstitute/lingua/blob/main/doc/CONTRIBUTING.md) for
+Contributing to lingua is welcomed. See [Contributing](https://github.com/VectorInstitute/lingua-sdk/blob/main/doc/CONTRIBUTING.md) for
 guidelines.
 
 ## License

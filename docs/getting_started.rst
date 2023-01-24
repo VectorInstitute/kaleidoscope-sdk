@@ -32,6 +32,11 @@ To install ``lingua-sdk`` from source:
     $ cd lingua-sdk
     $ pip install .
 
+Authentication 
+--------------
+
+TO DO
+
 Example Usage 
 -------------
 

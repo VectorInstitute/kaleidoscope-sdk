@@ -10,9 +10,9 @@ perform basic features like text generation, but also retrieve intermediate
 information from inside the model such as log probabilities and activations.
 These features are exposed via a few high-level APIs, namely:
 
-* `generate_text` - Returns an LLM text generation based on prompt input
-* `module_names` - Returns all modules in the LLM neural network
-* `instances` - Returns all active LLMs instantiated by the model service
+* ``generate_text`` - Returns an LLM text generation based on prompt input
+* ``module_names`` - Returns all modules in the LLM neural network
+* ``instances`` - Returns all active LLMs instantiated by the model service
 
 .. toctree::
    :maxdepth: 2
@@ -24,13 +24,13 @@ These features are exposed via a few high-level APIs, namely:
 
 Contributing
 ------------
-Contributing to lingua is welcomed. See [Contributing](https://github.com/VectorInstitute/lingua-sdk/blob/main/doc/CONTRIBUTING.md) for
+Contributing to lingua is welcomed. See `Contributing <https://github.com/VectorInstitute/lingua-sdk/blob/main/doc/CONTRIBUTING.md>`_ for
 guidelines.
 
 License
 -------
 
-lingua-sdk is 
+``lingua-sdk`` is disributed under the MIT license. See `LICENSE <https://github.com/VectorInstitute/lingua-sdk/blob/main/doc/LICENSE>`_
 
 Citation
 --------

@@ -14,23 +14,17 @@ Installation
 
 To install ``lingua-sdk`` from `PyPI <https://pypi.org/project/pylingua/>`_:
 
-.. code-block:: console
+    .. code-block:: console
 
-    $ pip install pylingua
+        $ pip install pylingua
 
-or directly from GitHub:
+to install ``lingua-sdk`` from source:
 
-.. code-block:: console
+    .. code-block:: console
 
-    $ pip install git+install git+https://github.com/VectorInstitute/lingua-sdk.git
-
-To install ``lingua-sdk`` from source:
-
-.. code-block:: console
-
-    $ git clone git@github.com:VectorInstitute/lingua-sdk.git
-    $ cd lingua-sdk
-    $ pip install .
+        $ git clone git@github.com:VectorInstitute/lingua-sdk.git
+        $ cd lingua-sdk
+        $ pip install .
 
 
 Example Usage 

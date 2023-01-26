@@ -12,66 +12,65 @@ A user toolkit for analyzing and interfacing with Large Language Models (LLMs)
 
 ## Overview
 
+``lingua-sdk`` is a Python module used to interact with large language models
+hosted via the Lingua service (available at https://github.com/VectorInstitute/lingua).
+It provides a simple interface launch LLMs on an HPC cluster, ask them to
+perform basic features like text generation, but also retrieve intermediate
+information from inside the model such as log probabilities and activations.
+These features are exposed via a few high-level APIs, namely:
+
+* `generate_text` - Returns an LLM text generation based on prompt input
+* `module_names` - Returns all modules in the LLM neural network
+* `instances` - Returns all active LLMs instantiated by the model service
+
+Full documentation and API reference are available at
+http://lingua-sdk.readthedocs.io.
+
 ## Getting Started
 
 ### Install
 
-~~Install via PyPI:~~ Coming soon!
-
 ```bash
-    python3 -m pip install pylingua
+python3 -m pip install pylingua
 ```
 or install from source:
 
 ```bash
-    pip install git+https://github.com/VectorInstitute/lingua-sdk.git
+pip install git+https://github.com/VectorInstitute/lingua-sdk.git
 ```
 
-### Model Interface
+### Authentication
 
-> Note: This is a pre-release build and the public API is subject to change.
+In order to submit text generation jobs, a designated Vector Institute cluster account is required. Please contact the
+[AI Engineering Team](mailto:ai_engineering@vectorinstitute.ai?subject=[Github]%20Lingua)
+in charge of Lingua for more information.
 
-``lingua-sdk`` provides a Python SDK for interfacing with LLMs on the Vector cluster and exposes two high-level objects:
+### Sample Workflow
 
+The following workflow shows how to load and interact with an OPT-175B model
+on the Vector Institute Vaughan cluster.
 
-    * Client: Faciliates authentication and model loading.
-
-    * Model: Facilitates model interaction.
-
-
-### Sample
 ```python
+# Establish a client connection to the Lingua service
+# If you have not previously authenticated with the service, you will be prompted to now
+client = lingua.Client(gateway_host="llm.cluster.local", gateway_port=3001)
 
-    import lingua
+# Get a handle to a model. If this model is not actively running, it will get launched in the background.
+# In this example we want to use the OPT model
+opt_model = client.load_model("OPT")
 
-    # Establish a client connection to the Lingua service
-    client = lingua.Client(gateway_host="llm.cluster.local", gateway_port=3001)
+# Show a list of modules in the neural network
+print(opt_model.module_names)
 
-    # Show all avaiable models, including active/inactive status
-    client.get_models()
-
-    # Get a handle to a model. If this model is not actively running, it will get launched in the background.
-    model = client.load_model("ModelName")
-
-    generation_config = {
-        "max_tokens": 5,
-        "top_k": 4,
-        "top_p": 3,
-        "rep_penalty": 1,
-        "temperature": 0.5
-    }
-
-    # Sample text generation w/ input parameters
-    text_gen = model.generate_text("What is the answer to life, the universe, and everything?", **generation_config)
-
-    dir(text_gen) # display methods associated with generated text object
-    text_gen.text # display only text
-    text_gen.logprobs # display logprobs
-    text_gen.tokens # display tokens
-
+# Sample text generation w/ input parameters
+text_gen = opt_model.generate_text("What is the answer to life, the universe, and everything?", max_tokens=5, top_k=4, top_p=3, rep_penalty=1, temperature=0.5)
+dir(text_gen) # display methods associated with generated text object
+text_gen.text # display only text
+text_gen.logprobs # display logprobs
+text_gen.tokens # display tokens
 ```
 
-## [Documentation](https://vectorinstitute.github.io/lingua-sdk/)
+## [Documentation](https://lingua-sdk.readthedocs.io/)
 More information can be found on the Lingua documentation site.
 
 ## Contributing

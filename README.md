@@ -30,12 +30,11 @@ http://lingua-sdk.readthedocs.io.
 
 ### Install
 
-Install via PyPI:
-
 ```bash
 python3 -m pip install pylingua
 ```
 or install from source:
+
 ```bash
 pip install git+https://github.com/VectorInstitute/lingua-sdk.git
 ```
@@ -52,14 +51,9 @@ The following workflow shows how to load and interact with an OPT-175B model
 on the Vector Institute Vaughan cluster.
 
 ```python
-import lingua
-
 # Establish a client connection to the Lingua service
 # If you have not previously authenticated with the service, you will be prompted to now
 client = lingua.Client(gateway_host="llm.cluster.local", gateway_port=3001)
-
-# Show all avaiable models, including active/inactive status
-client.get_models()
 
 # Get a handle to a model. If this model is not actively running, it will get launched in the background.
 # In this example we want to use the OPT model
@@ -80,7 +74,7 @@ text_gen.tokens # display tokens
 More information can be found on the Lingua documentation site.
 
 ## Contributing
-Contributing to lingua is welcomed. See [Contributing](https://github.com/VectorInstitute/lingua/blob/main/doc/CONTRIBUTING.md) for
+Contributing to lingua is welcomed. See [Contributing](https://github.com/VectorInstitute/lingua-sdk/blob/main/doc/CONTRIBUTING.md) for
 guidelines.
 
 ## License

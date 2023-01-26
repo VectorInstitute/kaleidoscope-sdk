@@ -20,7 +20,14 @@ JWT_TOKEN_FILE = Path(Path.home() / '.lingua.jwt')
 
 class Client:
 
-    def __init__(self, gateway_host, gateway_port, auth_key=None):
+    def __init__(self, gateway_host: str, gateway_port: int, auth_key: str = None):
+        """ Initializes the Lingua client
+
+        :param gateway_host: The host of the gateway service
+        :param gateway_port: The port of the gateway service
+        :param auth_key:  The authentication key for the gateway service
+        """
+
         self.gateway_host = gateway_host
         self.gateway_port = gateway_port
         self.base_addr = f"http://{self.gateway_host}:{self.gateway_port}/"
@@ -74,7 +81,12 @@ class Client:
         return model_instances
 
 
-    def load_model(self, model_name):
+    def load_model(self, model_name: str):
+        """Loads a model from the gateway service
+        
+        :param model_name: (str) The name of the model to load
+        """
+
         if model_name not in self.all_model_names:
             raise ValueError(
                 "asked for model {} but server only supports model "
@@ -98,6 +110,12 @@ class Client:
 class Model():
 
     def __init__(self, client: Client, model_name: str):
+        """ Initializes a model instance
+
+        :param client: (Client) Lingua client that this model belongs to
+        :param model_name: (str): The name of the model
+        """
+
         self.client = client
         self.model_name = model_name
         self.base_addr = f"http://{self.client.gateway_host}:{self.client.gateway_port}/"
@@ -115,8 +133,14 @@ class Model():
             self.client.authenticate()
 
 
-    def generate_text(self, prompt, /, **gen_kwargs):
-        """Generates a string of text based on a prompt"""
+    def generate_text(self, prompt, **gen_kwargs):
+        """Generates a string of text based on a prompt
+        
+        :param prompt: (str) The prompt to use for generation
+        :param gen_kwargs: (dict) Keyword arguments to pass to the model's generate function
+        """
+
+
         self.verify_request()
 
         """TODO: should support batching"""

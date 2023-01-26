@@ -32,10 +32,6 @@ To install ``lingua-sdk`` from source:
     $ cd lingua-sdk
     $ pip install .
 
-Authentication 
---------------
-
-TO DO
 
 Example Usage 
 -------------
@@ -70,3 +66,17 @@ This is a minimalist example of the SDK in action.
     text_gen.logprobs # display logprobs
     text_gen.tokens # display tokens
 
+Authentication 
+--------------
+
+Users must authenticate using their Vector Institute cluster credentials. This can be done interactively instantiating a client object:
+
+.. code-block:: console
+
+    >>> import lingua
+    >>> client = lingua.Client(gateway_host="llm.cluster.local", gateway_port=3001)
+    Please enter your username: <username>
+    Please enter your password: <password>
+
+This will generate an authentication token that will be used for all subsequent requests. The token will expire after 30 days, at which point the user will be prompted to re-authenticate. 
+The token is cached in the user's home directory, and will be reused if it is still valid.

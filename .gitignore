@@ -132,5 +132,4 @@ dmypy.json
 *.swp
 *.vim
 
-
 *.DS_STORE

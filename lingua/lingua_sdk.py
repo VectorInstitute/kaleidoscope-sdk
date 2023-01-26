@@ -138,7 +138,6 @@ class Model():
         
         :param prompt: (str) The prompt to use for generation
         :param gen_kwargs: (dict) Keyword arguments to pass to the model's generate function
-        
         """
 
 

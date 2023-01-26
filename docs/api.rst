@@ -1,10 +1,10 @@
 API
 ===
 
-.. autosummary::
-   :toctree: generated
+.. currentmodule:: lingua
 
-   lingua.Client
+.. autoclass:: Client
+    :members:
 
-   lingua.Model
-
+.. autoclass:: Model
+    :members:

@@ -3,6 +3,18 @@ Configuration
 
 The lingua SDK provides a flexible configuration interface based on the HuggingFace generation API.
 
+These are the current acceptable values in the format (client input name = model accepted name (default - type GPT2 default value)
+max_tokens = max-tokens (default - int 128)
+top_k = top-k (default - int 0)
+top_p = top-p (default - float 0.9)
+num_sequences = num_return_sequences (default - int 1)
+rep_penalty = repetition_penalty (default - float 1.0)
+temperature (default - float 1.0)
+stop_token (default - string None) [haven’t tested thoroughly]
+use_grad (default torch.is_grad_enabled()) [unsure about this one]
+do_sample= True (immutable) [static in GPT2 model]
+
+
 
 Generation Configuration
 ------------------------

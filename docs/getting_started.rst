@@ -66,7 +66,6 @@ This is a minimalist example of the SDK in action.
     # Sample text generation w/ input parameters
     text_gen = model.generate_text("What is the answer to life, the universe, and everything?", **generation_config)
 
-    dir(text_gen) # display methods associated with generated text object
     text_gen.text # display only text
     text_gen.logprobs # display logprobs
     text_gen.tokens # display tokens

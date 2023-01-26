@@ -1,5 +1,5 @@
 Lingua-SDK Documentation
-=====================
+========================
 
 To build the documentation you will need to have the following packages installed: ``sphinx``, ``sphinx_rtd_theme``,
 You can install them all via ``pip``. You can also do this as follows::

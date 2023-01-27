@@ -12,65 +12,69 @@ A user toolkit for analyzing and interfacing with Large Language Models (LLMs)
 
 ## Overview
 
-``lingua`` provides a few high-level APIs namely:
+``lingua-sdk`` is a Python module used to interact with large language models
+hosted via the Lingua service (available at https://github.com/VectorInstitute/lingua).
+It provides a simple interface launch LLMs on an HPC cluster, ask them to
+perform basic features like text generation, but also retrieve intermediate
+information from inside the model such as log probabilities and activations.
+These features are exposed via a few high-level APIs, namely:
 
-* `generate_text` - Returns an LLM text generation based on prompt input 
+* `generate_text` - Returns an LLM text generation based on prompt input
 * `module_names` - Returns all modules in the LLM neural network
 * `instances` - Returns all active LLMs instantiated by the model service
 
-``lingua`` is composed of the following components:
-
-* Python SDK - A command line tool wrapping the gateway service API endpoints
-* Web service - A front-end web application tool sending requests to the gateway service
-* Model service - A backend utility that loads models into GPU memory and exposes an interface to recieve requests
-
+Full documentation and API reference are available at
+http://lingua-sdk.readthedocs.io.
 
 ## Getting Started
 
 ### Install
 
-Install via PyPI:
-
 ```bash
-python3 -m pip install lingua
+python3 -m pip install pylingua
 ```
 or install from source:
+
 ```bash
-pip install git+https://github.com/VectorInstitute/lingua.git
+pip install git+https://github.com/VectorInstitute/lingua-sdk.git
 ```
 
-### Quick Start
+### Authentication
 
-### Retrieve personal auth key from http://llm.cluster.local:3001
-A sample text generation submission from the web may be required to sign-in and generate an updated authentication key.
-![Auth_demo_pic](https://user-images.githubusercontent.com/72175053/210878149-c142e36c-d61b-4b44-984f-3c0f8dec13de.png)
+In order to submit text generation jobs, a designated Vector Institute cluster account is required. Please contact the
+[AI Engineering Team](mailto:ai_engineering@vectorinstitute.ai?subject=[Github]%20Lingua)
+in charge of Lingua for more information.
 
-### Sample
+### Sample Workflow
+
+The following workflow shows how to load and interact with an OPT-175B model
+on the Vector Institute Vaughan cluster.
+
 ```python
-import lingua
-
 # Establish a client connection to the Lingua service
+# If you have not previously authenticated with the service, you will be prompted to now
 client = lingua.Client(gateway_host="llm.cluster.local", gateway_port=3001)
 
-# Show all avaiable models, including active/inactive status
-client.get_models()
-
 # Get a handle to a model. If this model is not actively running, it will get launched in the background.
-model = client.load_model("ModelName")
+# In this example we want to use the OPT model
+opt_model = client.load_model("OPT")
+
+# Show a list of modules in the neural network
+print(opt_model.module_names)
 
 # Sample text generation w/ input parameters
-text_gen = model.generate_text("What is the answer to life, the universe, and everything?", max_tokens=5, top_k=4, top_p=3, rep_penalty=1, temperature=0.5)
+text_gen = opt_model.generate_text("What is the answer to life, the universe, and everything?", max_tokens=5, top_k=4, top_p=3, rep_penalty=1, temperature=0.5)
 dir(text_gen) # display methods associated with generated text object
 text_gen.text # display only text
 text_gen.logprobs # display logprobs
 text_gen.tokens # display tokens
 ```
 
-## [Documentation](https://vectorinstitute.github.io/lingua/)
+## [Documentation](https://lingua-sdk.readthedocs.io/)
 More information can be found on the Lingua documentation site.
 
 ## Contributing
-Contributing to lingua is welcomed. See [Contributing](https://github.com/VectorInstitute/lingua/blob/main/doc/CONTRIBUTING.md) for
+Contributing to lingua is welcomed. See [Contributing](https://github.com/VectorInstitute/lingua-sdk/blob/main/doc/CONTRIBUTING.md) for
 guidelines.
 
 ## License

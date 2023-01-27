@@ -131,3 +131,5 @@ dmypy.json
 # Vim stuff
 *.swp
 *.vim
+
+*.DS_STORE

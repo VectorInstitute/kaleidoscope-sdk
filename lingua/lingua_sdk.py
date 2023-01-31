@@ -18,8 +18,6 @@ import utils
 JWT_TOKEN_FILE = Path(Path.home() / '.lingua.jwt')
 
 
-
-
 class Client:
 
     def __init__(self, gateway_host: str, gateway_port: int, auth_key: str = None, verbose: bool = False):
@@ -124,7 +122,7 @@ class GatewaySession:
         """Generates text from the model instance"""
 
         url = self.create_addr(f"models/instances/{model_instance_id}/generate")
-        body = {"text": text, 'generation_args': generation_args}
+        body = {"prompt": prompt, 'generation_args': generation_args}
 
         response = utils.post(url, body, auth_key=self.auth_key)
 

@@ -143,7 +143,7 @@ class Model():
 
         self.verify_request()
 
-        """TODO: should support batching"""
+        # TODO: Should support batching
         model_generate_addr = urljoin(self.model_base_addr, "generate_text")
         generate_configs = {}
         generate_configs['prompt']= prompt
@@ -165,6 +165,20 @@ class Model():
         print(f"Success:\n{prompt} {results.text}")
         return results
 
+    def get_activations(self, prompt, desired_model_activations: List[str]):
+        """Retrieves activations from the model based on input module layer
+        
+        :param prompt: (str) The prompt to use for generation
+        :param desired_model_activations: (list) The list of strined module layers to retrieve activations from
+        """
+        # TODO: Support abstract activation retrieval for different LLMs
+        activation_configs = {}
+        activation_configs['prompt']= prompt
+        # NOTE: max_tokens=0 and echo=True are not passed and assumed to be passed via gateway service
+        activation_configs['desired_model_activations']= desired_model_activations
+        model_activations_addr = urljoin(self.model_base_addr, "/get_activations")
+        activations= post(model_activations_addr, prompt, desired_model_activations, self.client.auth_key)
+        return activations
 
     @cached_property
     def module_names(self):

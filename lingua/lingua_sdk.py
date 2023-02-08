@@ -8,7 +8,7 @@ from pathlib import Path
 import sys
 import time
 import torch
-from typing import Dict
+from typing import Dict, List
 from urllib.parse import urljoin
 
 from .hooks import TestForwardHook
@@ -152,11 +152,16 @@ class Model():
 
         parameters= gen_kwargs.keys()
 
-        generate_configs['max-tokens'] = generate_configs.pop('max_tokens') if 'max_tokens' in parameters else None
-        generate_configs['top-k'] = generate_configs.pop('top_k') if 'top_k' in parameters else None
-        generate_configs['top-p'] = generate_configs.pop('top_p') if 'top_p' in parameters else None
-        generate_configs['num_return_sequences'] = generate_configs.pop('num_sequences') if 'num_sequences' in parameters else None
-        generate_configs['repetition_penalty'] = generate_configs.pop('rep_penalty') if 'rep_penalty' in parameters else None
+        if 'max_tokens' in parameters:
+            generate_configs['max-tokens'] = generate_configs.pop('max_tokens')
+        if 'top_k' in parameters:
+            generate_configs['top-k'] = generate_configs.pop('top_k')
+        if 'top_p' in parameters:
+            generate_configs['top-p'] = generate_configs.pop('top_p')
+        if 'num_sequences' in parameters:
+            generate_configs['num_return_sequences'] = generate_configs.pop('num_sequences')
+        if 'rep_penalty' in parameters:
+            generate_configs['repetition_penalty'] = generate_configs.pop('rep_penalty')
 
         print(f"Submission: {generate_configs}")
         generation = post(model_generate_addr, generate_configs, self.client.auth_key)
@@ -165,20 +170,24 @@ class Model():
         print(f"Success:\n{prompt} {results.text}")
         return results
 
-    def get_activations(self, prompt, desired_model_activations: List[str]):
+
+    def get_activations(self, prompt, desired_module_activations: List[str]):
         """Retrieves activations from the model based on input module layer
         
         :param prompt: (str) The prompt to use for generation
         :param desired_model_activations: (list) The list of strined module layers to retrieve activations from
         """
         # TODO: Support abstract activation retrieval for different LLMs
-        activation_configs = {}
-        activation_configs['prompt']= prompt
-        # NOTE: max_tokens=0 and echo=True are not passed and assumed to be passed via gateway service
-        activation_configs['desired_model_activations']= desired_model_activations
-        model_activations_addr = urljoin(self.model_base_addr, "/get_activations")
-        activations= post(model_activations_addr, prompt, desired_model_activations, self.client.auth_key)
+        activations_configs = {}
+        activations_configs['prompt'] = [prompt]
+        activations_configs['max_tokens'] = 0
+        activations_configs['echo'] = True
+        activations_configs['desired_module_activations'] = desired_module_activations
+        model_activations_addr = urljoin(self.model_base_addr, "get_activations")
+        activations = post(model_activations_addr, activations_configs, self.client.auth_key)
+
         return activations
+
 
     @cached_property
     def module_names(self):

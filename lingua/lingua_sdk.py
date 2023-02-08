@@ -10,7 +10,7 @@ import time
 import torch
 from typing import Dict
 from urllib.parse import urljoin
-from enum import Enum
+from enum import Enum, auto
 
 from .hooks import TestForwardHook
 import utils
@@ -84,8 +84,8 @@ class Client:
         model_instance_response = self._session.create_model_instance(model_name)
 
         model = Model(
-            model_instance_response['model_name'],
             model_instance_response['id'],
+            model_instance_response['name'],
             self._session
         )
 
@@ -96,6 +96,7 @@ class Client:
 
 class GatewaySession:
     """A session for a model instance"""
+    
     def __init__(self, gateway_host: str, gateway_port: int, auth_key: str):
         self.gateway_host = gateway_host
         self.gateway_port = gateway_port
@@ -129,18 +130,9 @@ class GatewaySession:
         return response
 
 
-class ModelInstanceState(Enum):
-    """The state of a model instance"""
-    LAUNCHING = 0
-    LOADING = 1
-    ACTIVE = 2
-    FAILED = 3
-    COMPLETED = 4
-
-
 class Model():
 
-    def __init__(self, model_name: str, model_instance_id: str, session: GatewaySession):
+    def __init__(self, model_instance_id: str, model_name: str, session: GatewaySession):
         """ Initializes a model instance
 
         :param client: (Client) Lingua client that this model belongs to
@@ -153,11 +145,11 @@ class Model():
 
     @property
     def state(self):
-        return ModelInstanceState(self._session.get_model_instance(self.id)['state'])
+        return self._session.get_model_instance(self.id)['state']
 
     def is_active(self):
         """ Checks if the model instance is active"""
-        return self.state == ModelInstanceState.ACTIVE
+        return self.state == 'ACTIVE'
 
     def generate(self, prompt: str, generation_args: Dict = {}):
         """ Generates text from the model instance
@@ -165,10 +157,12 @@ class Model():
         :param text: (str) The text to generate from
         :param kwargs: (dict) Additional arguments to pass to the model
         """
-        
-        #TODO: Add validation for generation args
 
-        return self._session.generate(self.id, prompt, generation_args)
+        generation_response = self._session.generate(self.id, prompt, generation_args)
+
+        GenerationObj = namedtuple('GenObj', generation_response.keys())
+
+        return GenerationObj(**generation_response)
 
     @cached_property
     def module_names(self):

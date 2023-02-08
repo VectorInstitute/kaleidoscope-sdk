@@ -25,8 +25,8 @@ def get(addr):
 
 def post(addr, obj, auth_key=None):
     if auth_key:
-        resp = requests.post(addr, data=obj, headers={'Authorization': 'Bearer '+auth_key})
+        resp = requests.post(addr, json=obj, headers={'Authorization': 'Bearer '+auth_key})
     else:
-        resp = requests.post(addr, data=obj)
+        resp = requests.post(addr, json=obj)
     check_response(resp)
     return resp.json()

@@ -1,5 +1,4 @@
 from collections import namedtuple
-from dataclasses import dataclass, field
 from functools import cached_property, partial
 from getpass import getpass
 import json
@@ -7,10 +6,8 @@ import requests
 from pathlib import Path
 import sys
 import time
-import torch
-from typing import Dict
+from typing import Dict, List, Optional
 from urllib.parse import urljoin
-from enum import Enum, auto
 
 from .hooks import TestForwardHook
 import utils
@@ -20,7 +17,7 @@ JWT_TOKEN_FILE = Path(Path.home() / '.lingua.jwt')
 
 class Client:
 
-    def __init__(self, gateway_host: str, gateway_port: int, auth_key: str = None, verbose: bool = False):
+    def __init__(self, gateway_host: str, gateway_port: int, auth_key: Optional[str] = None, verbose: bool = False):
         """ Initializes the Lingua client which faciliates communication with the gateway service
 
         :param gateway_host: The host of the gateway service
@@ -29,7 +26,11 @@ class Client:
         :param verbose: Print debugging information
         """
 
-        if not auth_key:
+        if auth_key:
+            self._session = GatewaySession(gateway_host, gateway_port, auth_key)
+        else:
+            self._session = GatewaySession(gateway_host, gateway_port)
+
             if JWT_TOKEN_FILE.exists():
                 with open(JWT_TOKEN_FILE, "r") as f:
                     auth_key = f.read()
@@ -41,9 +42,9 @@ class Client:
                     print(err)
                     sys.exit(1)
 
-        self.verbose = verbose
-        self._session = GatewaySession(gateway_host, gateway_port, auth_key)
+            self._session.auth_key = auth_key
 
+        self.verbose = verbose
         if self.verbose:
             print(f"Available models: {self.models} \nActive models instances: {self.model_instances}")
 
@@ -54,7 +55,7 @@ class Client:
         while num_tries < 3:
             username = input("Username: ")
             password = getpass()
-            result = requests.post(self.create_addr("authenticate"), auth=(username, password))
+            result = self._session.authenticate(username, password)
             if result.status_code == 200:
                 print("Login successful.")
                 auth_key = json.loads(result.text)['token']
@@ -75,10 +76,11 @@ class Client:
     def model_instances(self):
         return self._session.get_model_instances()
 
-    def load_model(self, model_name: str):
+    def load_model(self, model_name: str, wait_for_active: bool = False):
         """Loads a model from the gateway service
         
         :param model_name: (str) The name of the model to load
+        :param wait_for_active: (bool) Whether to wait for the model to become active before returning
         """
 
         model_instance_response = self._session.create_model_instance(model_name)
@@ -89,15 +91,18 @@ class Client:
             self._session
         )
 
-        while not model.is_active():
-            time.sleep(2)
+        if wait_for_active:
+            while not model.is_active():
+                if model.is_failed():
+                    raise Exception("Model failed to load")
+                time.sleep(2)
         
         return model
 
 class GatewaySession:
     """A session for a model instance"""
-    
-    def __init__(self, gateway_host: str, gateway_port: int, auth_key: str):
+
+    def __init__(self, gateway_host: str, gateway_port: int, auth_key: Optional[str] = None):
         self.gateway_host = gateway_host
         self.gateway_port = gateway_port
         self.auth_key = auth_key
@@ -105,10 +110,24 @@ class GatewaySession:
         self.base_addr = f"http://{self.gateway_host}:{self.gateway_port}/"
         self.create_addr = partial(urljoin, self.base_addr)
 
+    def authenticate(self, username: str, password: str):
+        url = self.create_addr("authenticate")
+        response = requests.post(url, auth=(username, password))
+        return response
+
+    def get_models(self):
+        url = self.create_addr("models")
+        response = utils.get(url)
+        return response
+
+    def get_model_instances(self):
+        url = self.create_addr("models/instances")
+        response = utils.get(url)
+        return response
 
     def create_model_instance(self, model_name: str):
         url = self.create_addr("models/instances")
-        body = {"model_name": model_name}
+        body = { "name": model_name }
         response = utils.post(url, body, auth_key=self.auth_key)
 
         return response
@@ -119,11 +138,27 @@ class GatewaySession:
         response = utils.get(url, auth_key=self.auth_key)
         return response
 
+    def get_model_instance_module_names(self, model_instance_id: str):
+        url = self.create_addr(f"models/instances/{model_instance_id}/modules")
+
+        response = utils.get(url, auth_key=self.auth_key)
+        return response
+
     def generate(self, model_instance_id: str, prompt: str, generation_args: Dict):
         """Generates text from the model instance"""
 
         url = self.create_addr(f"models/instances/{model_instance_id}/generate")
         body = {"prompt": prompt, 'generation_args': generation_args}
+
+        response = utils.post(url, body, auth_key=self.auth_key)
+
+        return response
+
+    def get_activations(self, model_instance_id: str, prompt: str, module_names: List[str]):
+        """Gets activations from the model instance"""
+
+        url = self.create_addr(f"models/instances/{model_instance_id}/activations")
+        body = {"prompt": prompt, "module_names": module_names}
 
         response = utils.post(url, body, auth_key=self.auth_key)
 
@@ -147,6 +182,10 @@ class Model():
     def state(self):
         return self._session.get_model_instance(self.id)['state']
 
+    @cached_property
+    def module_names(self):
+        return self._session.get_model_module_names(self.id)['module_names']
+
     def is_active(self):
         """ Checks if the model instance is active"""
         return self.state == 'ACTIVE'
@@ -157,13 +196,20 @@ class Model():
         :param text: (str) The text to generate from
         :param kwargs: (dict) Additional arguments to pass to the model
         """
-
         generation_response = self._session.generate(self.id, prompt, generation_args)
+        Generation = namedtuple('Generation', generation_response.keys())
 
-        GenerationObj = namedtuple('GenObj', generation_response.keys())
+        return Generation(**generation_response)
 
-        return GenerationObj(**generation_response)
 
-    @cached_property
-    def module_names(self):
-        return self._session.get_model_instance(self.id)['module_names']
+    def get_activations(self, prompt: str, module_names: List[str]):
+        """ Gets activations from the model instance
+
+        :param prompt: (str) The text to generate from
+        :param module_names: (List[str]) The layer to get activations from
+        """
+        activations_response = self._session.get_activations(self.id, prompt, module_names)
+        Activations = namedtuple('Activations', activations_response.keys())
+
+        return Activations(**activations_response)
+

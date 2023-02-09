@@ -10,7 +10,7 @@ from typing import Dict, List, Optional
 from urllib.parse import urljoin
 
 from .hooks import TestForwardHook
-import utils
+from .utils import get, post
 
 JWT_TOKEN_FILE = Path(Path.home() / '.lingua.jwt')
 
@@ -121,31 +121,31 @@ class GatewaySession:
 
     def get_models(self):
         url = self.create_addr("models")
-        response = utils.get(url)
+        response = get(url)
         return response
 
     def get_model_instances(self):
         url = self.create_addr("models/instances")
-        response = utils.get(url)
+        response = get(url)
         return response
 
     def create_model_instance(self, model_name: str):
         url = self.create_addr("models/instances")
         body = { "name": model_name }
-        response = utils.post(url, body, auth_key=self.auth_key)
+        response = post(url, body, auth_key=self.auth_key)
 
         return response
 
     def get_model_instance(self, model_instance_id: str):
         url = self.create_addr(f"models/instances/{model_instance_id}")
 
-        response = utils.get(url, auth_key=self.auth_key)
+        response = get(url, auth_key=self.auth_key)
         return response
 
     def get_model_instance_module_names(self, model_instance_id: str):
         url = self.create_addr(f"models/instances/{model_instance_id}/modules")
 
-        response = utils.get(url, auth_key=self.auth_key)
+        response = get(url, auth_key=self.auth_key)
         return response
 
     def generate(self, model_instance_id: str, prompt: str, generation_args: Dict):
@@ -154,7 +154,7 @@ class GatewaySession:
         url = self.create_addr(f"models/instances/{model_instance_id}/generate")
         body = {"prompt": prompt, 'generation_args': generation_args}
 
-        response = utils.post(url, body, auth_key=self.auth_key)
+        response = post(url, body, auth_key=self.auth_key)
 
         return response
 
@@ -164,7 +164,7 @@ class GatewaySession:
         url = self.create_addr(f"models/instances/{model_instance_id}/activations")
         body = {"prompt": prompt, "module_names": module_names}
 
-        response = utils.post(url, body, auth_key=self.auth_key)
+        response = post(url, body, auth_key=self.auth_key)
 
         return response
 

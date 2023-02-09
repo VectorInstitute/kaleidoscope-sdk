@@ -92,8 +92,12 @@ class Client:
         )
 
         if wait_for_active:
-            while not model.is_active():
-                if model.is_failed():
+            active = False
+            while not active:
+                model_state = model.state
+                if model_state == 'ACTIVE':
+                    active = True
+                elif model_state == 'FAILED':
                     raise Exception("Model failed to load")
                 time.sleep(2)
         

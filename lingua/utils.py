@@ -10,6 +10,20 @@ logger = logging.getLogger(__name__)
 
 def check_response(resp):
     if not resp.ok:
+        if resp.status_code == 422:
+            raise ValueError(
+                "Request to {} not sucessful, Error Code: {}, please check your auth key".format(
+                    resp.url,
+                    resp.status_code
+                )
+            )
+        elif resp.status_code == 400:
+            raise ValueError(
+                "Request to {} not sucessful, Error Code: {}, please check your request body".format(
+                    resp.url,
+                    resp.status_code
+                )
+            )
         raise ValueError(
             "Request to {} not sucessful, Error Code: {}".format(
                 resp.url,
@@ -35,5 +49,5 @@ def post(addr, body, auth_key = None, headers = {}):
 
     resp = requests.post(addr, json=body, headers=headers)
     check_response(resp)
-    
+
     return resp.json()

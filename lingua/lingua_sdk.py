@@ -161,7 +161,7 @@ class GatewaySession:
     def get_activations(self, model_instance_id: str, prompt: str, module_names: List[str]):
         """Gets activations from the model instance"""
 
-        url = self.create_addr(f"models/instances/{model_instance_id}/activations")
+        url = self.create_addr(f"models/instances/{model_instance_id}/generate_activations")
         body = {"prompt": prompt, "module_names": module_names}
 
         response = post(url, body, auth_key=self.auth_key)
@@ -204,7 +204,6 @@ class Model():
         Generation = namedtuple('Generation', generation_response.keys())
 
         return Generation(**generation_response)
-
 
     def get_activations(self, prompt: str, module_names: List[str]):
         """ Gets activations from the model instance

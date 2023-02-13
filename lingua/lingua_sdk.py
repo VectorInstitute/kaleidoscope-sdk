@@ -10,7 +10,7 @@ from typing import Dict, List, Optional
 from urllib.parse import urljoin
 
 from .hooks import TestForwardHook
-from .utils import get, post
+from .utils import get, post, decode_str
 
 JWT_TOKEN_FILE = Path(Path.home() / '.lingua.jwt')
 
@@ -212,7 +212,8 @@ class Model():
         :param module_names: (List[str]) The layer to get activations from
         """
         activations_response = self._session.get_activations(self.id, prompt, module_names, generation_config)
-        Activations = namedtuple('Activations', activations_response.keys())
+        activations_response['activations'] = {k: decode_str(v) for k, v in activations_response["activations"].items()}
 
+        Activations = namedtuple('Activations', activations_response.keys())
         return Activations(**activations_response)
 

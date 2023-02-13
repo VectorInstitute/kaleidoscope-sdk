@@ -5,8 +5,13 @@ TODOS:
 import logging
 import json
 import requests
+import pickle
+import codecs
 
 logger = logging.getLogger(__name__)
+
+def decode_str(obj_in_str):
+    return pickle.loads(codecs.decode(obj_in_str.encode("utf-8"), "base64"))
 
 def check_response(resp):
     if not resp.ok:

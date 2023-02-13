@@ -24,6 +24,7 @@ setup(
         "torch==1.13.1",
         "typing_extensions==4.4.0",
         "urllib3==1.26.14",
+        "numpy"
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",

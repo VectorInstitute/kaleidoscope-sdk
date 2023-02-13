@@ -10,7 +10,7 @@ from typing import Dict, List, Optional
 from urllib.parse import urljoin
 
 from .hooks import TestForwardHook
-from .utils import get, post
+from .utils import get, post, decode_str
 
 JWT_TOKEN_FILE = Path(Path.home() / '.lingua.jwt')
 
@@ -143,26 +143,26 @@ class GatewaySession:
         return response
 
     def get_model_instance_module_names(self, model_instance_id: str):
-        url = self.create_addr(f"models/instances/{model_instance_id}/modules")
+        url = self.create_addr(f"models/instances/{model_instance_id}/module_names")
 
         response = get(url, auth_key=self.auth_key)
         return response
 
-    def generate(self, model_instance_id: str, prompt: str, generation_args: Dict):
+    def generate(self, model_instance_id: str, prompt: str, generation_config: Dict):
         """Generates text from the model instance"""
 
         url = self.create_addr(f"models/instances/{model_instance_id}/generate")
-        body = {"prompt": prompt, 'generation_args': generation_args}
+        body = {"prompt": prompt, 'generation_config': generation_config}
 
         response = post(url, body, auth_key=self.auth_key)
 
         return response
 
-    def get_activations(self, model_instance_id: str, prompt: str, module_names: List[str]):
+    def get_activations(self, model_instance_id: str, prompt: str, module_names: List[str], generation_config: Dict):
         """Gets activations from the model instance"""
 
         url = self.create_addr(f"models/instances/{model_instance_id}/generate_activations")
-        body = {"prompt": prompt, "module_names": module_names}
+        body = {"prompt": prompt, "module_names": module_names, "generation_config": generation_config}
 
         response = post(url, body, auth_key=self.auth_key)
 
@@ -188,31 +188,32 @@ class Model():
 
     @cached_property
     def module_names(self):
-        return self._session.get_model_module_names(self.id)['module_names']
+        return self._session.get_model_instance_module_names(self.id)['module_names']
 
     def is_active(self):
         """ Checks if the model instance is active"""
         return self.state == 'ACTIVE'
 
-    def generate(self, prompt: str, generation_args: Dict = {}):
+    def generate(self, prompt: str, generation_config: Dict = {}):
         """ Generates text from the model instance
 
         :param text: (str) The text to generate from
         :param kwargs: (dict) Additional arguments to pass to the model
         """
-        generation_response = self._session.generate(self.id, prompt, generation_args)
+        generation_response = self._session.generate(self.id, prompt, generation_config)
         Generation = namedtuple('Generation', generation_response.keys())
 
         return Generation(**generation_response)
 
-    def get_activations(self, prompt: str, module_names: List[str]):
+    def get_activations(self, prompt: str, module_names: List[str], generation_config: Dict = {}):
         """ Gets activations from the model instance
 
         :param prompt: (str) The text to generate from
         :param module_names: (List[str]) The layer to get activations from
         """
-        activations_response = self._session.get_activations(self.id, prompt, module_names)
-        Activations = namedtuple('Activations', activations_response.keys())
+        activations_response = self._session.get_activations(self.id, prompt, module_names, generation_config)
+        activations_response['activations'] = {k: decode_str(v) for k, v in activations_response["activations"].items()}
 
+        Activations = namedtuple('Activations', activations_response.keys())
         return Activations(**activations_response)
 

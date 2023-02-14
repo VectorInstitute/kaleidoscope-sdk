@@ -65,15 +65,15 @@ print(client.models)
 opt_model = client.load_model("OPT-175B")
 
 # If not the was not actively running, this it could take several minutes to load. Wait for it come online.
-while list(filter(lambda instances: instances['id'] == opt_model.id, client.model_instances))[0]['state'] != "ACTIVE":
+while opt_model.state != "ACTIVE":
     time.sleep(1)
 
 # Sample text generation w/ input parameters
-text_gen = opt_model.generate_text("What is the answer to life, the universe, and everything?", max_tokens=5, top_k=4, top_p=3, rep_penalty=1, temperature=0.5)
+text_gen = opt_model.generate("What is the answer to life, the universe, and everything?", {'max_tokens': 5, 'top_k': 4, 'top_p': 3, 'rep_penalty': 1, 'temperature': 0.5})
 dir(text_gen) # display methods associated with generated text object
-text_gen.text # display only text
-text_gen.logprobs # display logprobs
-text_gen.tokens # display tokens
+text_gen.generation['text'] # display only text
+text_gen.generation['logprobs'] # display logprobs
+text_gen.generation['tokens'] # display tokens
 
 # Now let's retrieve some activations from the model
 # First, show a list of modules in the neural network

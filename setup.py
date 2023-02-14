@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="pylingua",
-    version="0.1.0",
+    version="0.2.0",
     description="A user toolkit for analyzing and interfacing with Large Language Models (LLMs)",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -24,6 +24,7 @@ setup(
         "torch==1.13.1",
         "typing_extensions==4.4.0",
         "urllib3==1.26.14",
+        "numpy"
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",

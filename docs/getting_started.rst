@@ -35,16 +35,26 @@ This is a minimalist example of the SDK in action.
 .. code-block:: python
 
     import lingua
+    import time
 
     # Establish a client connection to the Lingua service
     client = lingua.Client(gateway_host="llm.cluster.local", gateway_port=3001)
 
-    # Show all avaiable models, including active/inactive status
-    client.get_models()
+    # Show all supported models
+    client.models
 
-    # Get a handle to a model. If this model is not actively running, it will get launched in the background.
-    model = client.load_model("ModelName")
+    # Show all model instances that are currently active
+    client.model_instances
 
+    # Get a handle to a model. In this example, let's use the OPT-175B model.
+    opt_model = client.load_model("OPT-175B")
+
+    # If this model is not actively running, it will get launched in the background.
+    # In this case, wait until it moves into an "ACTIVE" state before proceeding.
+    while opt_model.state != "ACTIVE":    
+        time.sleep(1)
+
+    # Now we wnat to generate some text. Start by defining a few generation attributes.
     generation_config = {
         "max_tokens": 5,
         "top_k": 4,
@@ -54,11 +64,16 @@ This is a minimalist example of the SDK in action.
     }
 
     # Sample text generation w/ input parameters
-    text_gen = model.generate_text("What is the answer to life, the universe, and everything?", **generation_config)
+    text_gen = model.generate("What is the answer to life, the universe, and everything?", **generation_config)
 
-    text_gen.text # display only text
-    text_gen.logprobs # display logprobs
-    text_gen.tokens # display tokens
+    text_gen.generation['text'] # display only text
+    text_gen.generation['logprobs'] # display logprobs
+    text_gen.generation['tokens'] # display tokens
+
+    # Now let's retrieve some activations for a given module layer
+    requested_activations = ['_fsdp_wrapped_module._fpw_module.decoder.layers.0._fsdp_wrapped_module._fpw_module']
+    activations = opt_model.get_activations("What are activations?", requested_activations)
+    
 
 Authentication 
 --------------

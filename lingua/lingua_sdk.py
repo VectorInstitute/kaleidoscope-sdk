@@ -70,10 +70,12 @@ class Client:
 
     @cached_property
     def models(self):
+        """Returns a list of all supported models"""
         return self._session.get_models()
 
     @property
     def model_instances(self):
+        """Returns a list of available model instances"""
         return self._session.get_model_instances()
 
     def load_model(self, model_name: str, wait_for_active: bool = False):
@@ -184,10 +186,12 @@ class Model():
 
     @property
     def state(self):
+        """ Returns a string describing the state of the model """
         return self._session.get_model_instance(self.id)['state']
 
     @cached_property
     def module_names(self):
+        """ Returns a list of all module names in this model """
         return self._session.get_model_instance_module_names(self.id)['module_names']
 
     def is_active(self):

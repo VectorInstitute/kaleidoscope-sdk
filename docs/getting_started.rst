@@ -6,7 +6,7 @@ Integrate the Lingua SDK into your project quickly!
 Requirements
 ------------
 
-* Python version >= 3.7
+* Python version >= 3.8
 
 
 Installation
@@ -18,7 +18,7 @@ To install ``lingua-sdk`` from `PyPI <https://pypi.org/project/pylingua/>`_:
 
         $ pip install pylingua
 
-to install ``lingua-sdk`` from source:
+To install ``lingua-sdk`` from source:
 
     .. code-block:: console
 
@@ -84,8 +84,9 @@ Users must authenticate using their Vector Institute cluster credentials. This c
 
     >>> import lingua
     >>> client = lingua.Client(gateway_host="llm.cluster.local", gateway_port=3001)
-    Please enter your username: <username>
-    Please enter your password: <password>
+    You must authenticate with your LDAP credentials to use the Lingua service
+    Username: <username>
+    Password: <password>
 
 This will generate an authentication token that will be used for all subsequent requests. The token will expire after 30 days, at which point the user will be prompted to re-authenticate. 
 The token is cached in the user's home directory, and will be reused if it is still valid.

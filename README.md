@@ -19,9 +19,10 @@ perform basic features like text generation, but also retrieve intermediate
 information from inside the model such as log probabilities and activations.
 These features are exposed via a few high-level APIs, namely:
 
-* `generate_text` - Returns an LLM text generation based on prompt input
+* `generate` - Returns an LLM text generation based on prompt input
 * `module_names` - Returns all modules in the LLM neural network
-* `instances` - Returns all active LLMs instantiated by the model service
+* `model_instances` - Returns all active LLMs instantiated and avaiable to use
+* `get_activations` - Retrieves all activations for a set of modules
 
 Full documentation and API reference are available at
 http://lingua-sdk.readthedocs.io.

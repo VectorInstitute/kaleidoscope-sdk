@@ -6,7 +6,7 @@ import requests
 from pathlib import Path
 import sys
 import time
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 from urllib.parse import urljoin
 
 from .hooks import TestForwardHook
@@ -198,23 +198,27 @@ class Model():
         """ Checks if the model instance is active"""
         return self.state == 'ACTIVE'
 
-    def generate(self, prompts: List[str], generation_config: Dict = {}):
+    def generate(self, prompts: Union[str, List[str]], generation_config: Dict = {}):
         """ Generates text from the model instance
 
-        :param prompts: (List[str]) The list of prompts to generate from
+        :param prompts: (str or List[str]) Single prompt or list of prompts to generate from
         :param kwargs: (dict) Additional arguments to pass to the model
         """
+        if isinstance(prompts, str):
+            prompts = [prompts]
         generation_response = self._session.generate(self.id, prompts, generation_config)
         Generation = namedtuple('Generation', generation_response.keys())
 
         return Generation(**generation_response)
 
-    def get_activations(self, prompts: List[str], module_names: List[str], generation_config: Dict = {}):
+    def get_activations(self, prompts: Union[str, List[str]], module_names: List[str], generation_config: Dict = {}):
         """ Gets activations from the model instance
 
-        :param prompts: (List[str]) The list of prompts to generate from
+        :param prompts: (str or List[str]) Single prompt or list of prompts to generate from
         :param module_names: (List[str]) The layer to get activations from
         """
+        if isinstance(prompts, str):
+            prompts = [prompts]
         activations_response = self._session.get_activations(self.id, prompts, module_names, generation_config)
         activations_response['activations'] = {k: decode_str(v) for k, v in activations_response["activations"].items()}
 

@@ -7,6 +7,7 @@ import torch
 next gen will be web pdb
 """
 
+
 class TestForwardHook(SimpleNamespace):
     """this class's call signature should mimic the same
     thing as the pytorch forward hooks, except you don't have access

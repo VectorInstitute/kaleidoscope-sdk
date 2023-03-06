@@ -27,7 +27,7 @@ To install ``lingua-sdk`` from source:
         $ pip install .
 
 
-Example Usage 
+Example Usage
 -------------
 
 This is a minimalist example of the SDK in action.
@@ -51,7 +51,7 @@ This is a minimalist example of the SDK in action.
 
     # If this model is not actively running, it will get launched in the background.
     # In this case, wait until it moves into an "ACTIVE" state before proceeding.
-    while opt_model.state != "ACTIVE":    
+    while opt_model.state != "ACTIVE":
         time.sleep(1)
 
     # Now we wnat to generate some text. Start by defining a few generation attributes.
@@ -73,9 +73,9 @@ This is a minimalist example of the SDK in action.
     # Now let's retrieve some activations for a given module layer
     requested_activations = ['_fsdp_wrapped_module._fpw_module.decoder.layers.0._fsdp_wrapped_module._fpw_module']
     activations = opt_model.get_activations("What are activations?", requested_activations)
-    
 
-Authentication 
+
+Authentication
 --------------
 
 Users must authenticate using their Vector Institute cluster credentials. This can be done interactively instantiating a client object:
@@ -88,5 +88,5 @@ Users must authenticate using their Vector Institute cluster credentials. This c
     Username: <username>
     Password: <password>
 
-This will generate an authentication token that will be used for all subsequent requests. The token will expire after 30 days, at which point the user will be prompted to re-authenticate. 
+This will generate an authentication token that will be used for all subsequent requests. The token will expire after 30 days, at which point the user will be prompted to re-authenticate.
 The token is cached in the user's home directory, and will be reused if it is still valid.

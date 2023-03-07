@@ -237,16 +237,16 @@ class Model:
         self, prompt: str, module_names: List[str], generation_config: Dict = {}
     ):
         """Gets activations from the model instance
-
         :param prompt: (str) The text to generate from
         :param module_names: (List[str]) The layer to get activations from
         """
         activations_response = self._session.get_activations(
             self.id, prompt, module_names, generation_config
         )
-        activations_response["activations"] = {
-            k: decode_str(v) for k, v in activations_response["activations"].items()
-        }
+        for elm in activations_response["activations"]:
+            activations_response["activations"][elm] = decode_str(
+                activations_response["activations"][elm]
+            )
 
         Activations = namedtuple("Activations", activations_response.keys())
         return Activations(**activations_response)

@@ -3,8 +3,8 @@ import pytest
 
 # Verifies the posted data is echoed correctly
 def test_post():
-    response = lingua.utils.post("https://httpbin.org/post", 'test post data')
-    assert response['data'] == 'test post data'
+    response = lingua.utils.post("https://httpbin.org/post", "test post data")
+    assert str(response["data"]) == "test post data"
 
 def test_get():
     response = lingua.utils.get("http://ip.jsontest.com")

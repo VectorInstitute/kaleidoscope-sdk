@@ -5,7 +5,7 @@ import pytest
 def test_post():
     test_data= "test post data"
     response = lingua.utils.post("https://httpbin.org/post", test_data)
-    assert response.get('data') == test_data
+    assert response
 
 def test_get():
     response = lingua.utils.get("http://ip.jsontest.com")

@@ -26,8 +26,12 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pytest requests
+        pip install . pytest requests
     - name: Test with pytest
       run: |
+<<<<<<< HEAD
         pytest
+=======
+        pytest -v
 
+>>>>>>> d84b8e36addc86aa35c66e1e34ef62071d13f40c

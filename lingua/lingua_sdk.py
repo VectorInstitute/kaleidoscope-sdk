@@ -220,8 +220,9 @@ class Model():
         if isinstance(prompts, str):
             prompts = [prompts]
         activations_response = self._session.get_activations(self.id, prompts, module_names, generation_config)
-        for elm in activations_response['activations']:
-            activations_response['activations'][elm] = decode_str(activations_response['activations'][elm])
+        for idx in range(len(activations_response['activations'])):
+            for elm in activations_response['activations'][idx]:
+                activations_response['activations'][idx][elm] = decode_str(activations_response['activations'][idx][elm])
 
         Activations = namedtuple('Activations', activations_response.keys())
         return Activations(**activations_response)

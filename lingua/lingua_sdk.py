@@ -63,7 +63,7 @@ class Client:
                     f.write(auth_key)
                 return auth_key
             else:
-                print("Authentication failed.")
+                print(f"Authentication failed: {json.loads(result.text)['msg']}")
                 num_tries += 1
 
         raise Exception("Too many failed login attempts.")

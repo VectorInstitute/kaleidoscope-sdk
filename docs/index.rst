@@ -10,10 +10,11 @@ perform basic features like text generation, but also retrieve intermediate
 information from inside the model such as log probabilities and activations.
 These features are exposed via a few high-level APIs, namely:
 
-*  **model_instances** - Returns all active LLMs instantiated and available to use
+*  **model_instances** - Shows a list of all active LLMs instantiated by the model service
+*  **load_model** - Loads an LLM via the model service
 *  **generate** - Returns an LLM text generation based on prompt input
-*  **module_names** - Returns all modules in the LLM neural network
-*  **get_activations** - Retrieves all activations from a set of modules
+*  **module_names** - Returns all modules names in the LLM neural network
+*  **get_activations** - Retrieves all activations for a set of modules
 
 .. toctree::
    :maxdepth: 2

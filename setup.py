@@ -5,12 +5,12 @@ with open("README.md", "r") as fh:
 
 setup(
     name="pylingua",
-    version="0.2.0",
+    version="0.3.0",
     description="A user toolkit for analyzing and interfacing with Large Language Models (LLMs)",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    keywords='python nlp machine-learning deep-learning distributed-computing neural-networks tensor llm',
-    requires_python = ">=3.7",
+    keywords="python nlp machine-learning deep-learning distributed-computing neural-networks tensor llm",
+    requires_python=">=3.7",
     url="https://github.com/VectorInstitute/lingua-sdk",
     author=["Vector AI Engineering"],
     author_email="ai_engineering@vectorinstitute.ai",
@@ -24,7 +24,7 @@ setup(
         "torch==1.13.1",
         "typing_extensions==4.4.0",
         "urllib3==1.26.14",
-        "numpy"
+        "numpy",
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",

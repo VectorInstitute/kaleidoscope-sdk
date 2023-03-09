@@ -11,4 +11,3 @@ After this step you can generate the HTML documentation with::
     make html
 
 You can then open the file ``_build/html/index.html`` to read the docs.
-

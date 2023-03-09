@@ -10,10 +10,11 @@ perform basic features like text generation, but also retrieve intermediate
 information from inside the model such as log probabilities and activations.
 These features are exposed via a few high-level APIs, namely:
 
-*  `model_instances` - Returns all active LLMs instantiated and available to use
-*  `generate` - Returns an LLM text generation based on prompt input
-*  `module_names` - Returns all modules in the LLM neural network
-*  `get_activations` - Retrieves all activations from a given module
+*  **model_instances** - Shows a list of all active LLMs instantiated by the model service
+*  **load_model** - Loads an LLM via the model service
+*  **generate** - Returns an LLM text generation based on prompt input
+*  **module_names** - Returns all modules names in the LLM neural network
+*  **get_activations** - Retrieves all activations for a set of modules
 
 .. toctree::
    :maxdepth: 2
@@ -39,4 +40,4 @@ Reference to cite when you use Lingua in a project or a research paper:
 
 ::
 
-   Sivaloganathan, J., Coatsworth, M., Willes, J., Choi, M., & Shen, G. (2022). Lingua. http://VectorInstitute.github.io/lingua. computer software, Vector Institute for Artificial Intelligence. Retrieved from https://github.com/VectorInstitute/lingua-sdk.git. 
+   Sivaloganathan, J., Coatsworth, M., Willes, J., Choi, M., & Shen, G. (2022). Lingua. http://VectorInstitute.github.io/lingua. computer software, Vector Institute for Artificial Intelligence. Retrieved from https://github.com/VectorInstitute/lingua-sdk.git.

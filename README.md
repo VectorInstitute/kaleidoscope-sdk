@@ -1,22 +1,20 @@
 # Lingua-SDK
+![PyPI](https://img.shields.io/pypi/v/pylingua)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pylingua)
+![GitHub](https://img.shields.io/github/license/VectorInstitute/lingua-sdk)
+![DOI](https://img.shields.io/badge/DOI-in--progress-blue)
+[![Documentation](https://img.shields.io/badge/api-reference-lightgrey.svg)](https://lingua-sdk.readthedocs.io/en/latest/)
+
 A user toolkit for analyzing and interfacing with Large Language Models (LLMs)
 
-<!--
-[![PyPI]()]()
-[![code checks]()]()
-[![integration tests]()]()
-[![docs]()]()
-[![codecov]()
-[![license]()]()
--->
 
 ## Overview
 
 ``lingua-sdk`` is a Python module used to interact with large language models
-hosted via the Lingua service (available at https://github.com/VectorInstitute/lingua).
-It provides a simple interface launch LLMs on an HPC cluster, ask them to
+hosted via the Lingua service available at: https://github.com/VectorInstitute/lingua.
+It provides a simple interface to launch LLMs on an HPC cluster, asking them to
 perform basic features like text generation, but also retrieve intermediate
-information from inside the model such as log probabilities and activations.
+information from inside the model, such as log probabilities and activations.
 These features are exposed via a few high-level APIs, namely:
 
 * `generate` - Returns an LLM text generation based on prompt input
@@ -24,8 +22,6 @@ These features are exposed via a few high-level APIs, namely:
 * `model_instances` - Returns all active LLMs instantiated and avaiable to use
 * `get_activations` - Retrieves all activations for a set of modules
 
-Full documentation and API reference are available at
-http://lingua-sdk.readthedocs.io.
 
 ## Getting Started
 
@@ -86,11 +82,11 @@ activations = opt_model.get_activations("What are activations?", requested_activ
 print(activations)
 ```
 
-## [Documentation](https://lingua-sdk.readthedocs.io/)
-More information can be found on the Lingua documentation site.
+## Documentation
+Full documentation and API reference are available at: http://lingua-sdk.readthedocs.io.
 
 ## Contributing
-Contributing to lingua is welcomed. See [Contributing](https://github.com/VectorInstitute/lingua-sdk/blob/main/doc/CONTRIBUTING.md) for
+Contributing to lingua is welcomed. See [Contributing](CONTRIBUTING) for
 guidelines.
 
 ## License

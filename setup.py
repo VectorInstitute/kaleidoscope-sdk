@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="pykaleidoscope",
+    name="kscope",
     version="0.3.0",
     description="A user toolkit for analyzing and interfacing with Large Language Models (LLMs)",
     long_description=long_description,
@@ -15,7 +15,7 @@ setup(
     author=["Vector AI Engineering"],
     author_email="ai_engineering@vectorinstitute.ai",
     license="MIT",
-    packages=["kaleidoscope"],
+    packages=["kscope"],
     install_requires=[
         "certifi==2022.12.7",
         "charset-normalizer==3.0.1",

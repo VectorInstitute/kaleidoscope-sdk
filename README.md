@@ -36,7 +36,7 @@ Requires Python version >= 3.8
 ### Install
 
 ```bash
-python3 -m pip install pykaleidoscope
+python3 -m pip install kscope
 ```
 or install from source:
 

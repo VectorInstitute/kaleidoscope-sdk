@@ -12,11 +12,11 @@ Requirements
 Installation
 ------------
 
-To install ``kaleidoscope-sdk`` from `PyPI <https://pypi.org/project/pykaleidoscope/>`_:
+To install ``kaleidoscope-sdk`` from `PyPI <https://pypi.org/project/kscope/>`_:
 
     .. code-block:: console
 
-        $ pip install pykaleidoscope
+        $ pip install kscope
 
 To install ``kaleidoscope-sdk`` from source:
 

@@ -12,7 +12,7 @@ from urllib.parse import urljoin
 from .hooks import TestForwardHook
 from .utils import get, post, decode_str
 
-JWT_TOKEN_FILE = Path(Path.home() / ".lingua.jwt")
+JWT_TOKEN_FILE = Path(Path.home() / ".kaleidoscope.jwt")
 
 
 class Client:
@@ -23,7 +23,7 @@ class Client:
         auth_key: Optional[str] = None,
         verbose: bool = False,
     ):
-        """Initializes the Lingua client which faciliates communication with the gateway service
+        """Initializes the Kaleidoscope client which faciliates communication with the gateway service
 
         :param gateway_host: The host of the gateway service
         :param gateway_port: The port of the gateway service
@@ -42,7 +42,7 @@ class Client:
             else:
                 try:
                     print(
-                        "You must authenticate with your LDAP credentials to use the Lingua service"
+                        "You must authenticate with your LDAP credentials to use the Kaleidoscope service"
                     )
                     auth_key = self.authenticate()
                 except Exception as err:
@@ -161,11 +161,13 @@ class GatewaySession:
         response = get(url, auth_key=self.auth_key)
         return response
 
-    def generate(self, model_instance_id: str, prompts: List[str], generation_config: Dict):
+    def generate(
+        self, model_instance_id: str, prompts: List[str], generation_config: Dict
+    ):
         """Generates text from the model instance"""
 
         url = self.create_addr(f"models/instances/{model_instance_id}/generate")
-        body = {"prompts": prompts, 'generation_config': generation_config}
+        body = {"prompts": prompts, "generation_config": generation_config}
 
         response = post(url, body, auth_key=self.auth_key)
 
@@ -188,7 +190,7 @@ class GatewaySession:
             "module_names": module_names,
             "generation_config": generation_config,
         }
-        
+
         response = post(url, body, auth_key=self.auth_key)
 
         return response
@@ -200,7 +202,7 @@ class Model:
     ):
         """Initializes a model instance
 
-        :param client: (Client) Lingua client that this model belongs to
+        :param client: (Client) Kaleidoscope client that this model belongs to
         :param model_name: (str): The name of the model
         """
 
@@ -223,22 +225,27 @@ class Model:
         return self.state == "ACTIVE"
 
     def generate(self, prompts: Union[str, List[str]], generation_config: Dict = {}):
-        """ Generates text from the model instance
+        """Generates text from the model instance
 
         :param prompts: (str or List[str]) Single prompt or list of prompts to generate from
         :param kwargs: (dict) Additional arguments to pass to the model
         """
         if isinstance(prompts, str):
             prompts = [prompts]
-        generation_response = self._session.generate(self.id, prompts, generation_config)
-        Generation = namedtuple('Generation', generation_response.keys())
+        generation_response = self._session.generate(
+            self.id, prompts, generation_config
+        )
+        Generation = namedtuple("Generation", generation_response.keys())
 
         return Generation(**generation_response)
 
     def get_activations(
-        self, prompts: Union[str, List[str]], module_names: List[str], generation_config: Dict = {}
+        self,
+        prompts: Union[str, List[str]],
+        module_names: List[str],
+        generation_config: Dict = {},
     ):
-        """ Gets activations from the model instance
+        """Gets activations from the model instance
         :param prompts: (str or List[str]) Single prompt or list of prompts to generate from
         :param module_names: (List[str]) The layer to get activations from
         """
@@ -247,10 +254,10 @@ class Model:
         activations_response = self._session.get_activations(
             self.id, prompts, module_names, generation_config
         )
-        for idx in range(len(activations_response['activations'])):
-            for elm in activations_response['activations'][idx]:
-                activations_response['activations'][idx][elm] = decode_str(
-                    activations_response['activations'][idx][elm]
+        for idx in range(len(activations_response["activations"])):
+            for elm in activations_response["activations"][idx]:
+                activations_response["activations"][idx][elm] = decode_str(
+                    activations_response["activations"][idx][elm]
                 )
 
         Activations = namedtuple("Activations", activations_response.keys())

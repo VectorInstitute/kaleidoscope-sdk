@@ -55,12 +55,12 @@ on the Vector Institute Vaughan cluster.
 
 ```python
 #!/usr/bin/env python3
-import kaleidoscope
+import kscope
 import time
 
 # Establish a client connection to the Kaleidoscope service
 # If you have not previously authenticated with the service, you will be prompted to now
-client = kaleidoscope.Client(gateway_host="llm.cluster.local", gateway_port=3001)
+client = kscope.Client(gateway_host="llm.cluster.local", gateway_port=3001)
 
 # See which models are supported
 client.models

@@ -58,8 +58,8 @@ This is a minimalist example of the SDK in action.
     generation_config = {
         "max_tokens": 5,
         "top_k": 4,
-        "top_p": 3,
-        "rep_penalty": 1,
+        .. "top_p": 3,
+        .. "rep_penalty": 1,
         "temperature": 0.5
     }
 

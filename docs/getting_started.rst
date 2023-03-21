@@ -1,7 +1,7 @@
 Getting Started
 ===============
 
-Integrate the Kaleidoscope SDK into your project quickly!
+Integrate the Kaleidoscope SDK (kscope) into your project quickly!
 
 Requirements
 ------------
@@ -12,13 +12,13 @@ Requirements
 Installation
 ------------
 
-To install ``kaleidoscope-sdk`` from `PyPI <https://pypi.org/project/kscope/>`_:
+To install the Kaleidoscope SDK from `PyPI <https://pypi.org/project/kscope/>`_:
 
     .. code-block:: console
 
         $ pip install kscope
 
-To install ``kaleidoscope-sdk`` from source:
+To install the Kaleidoscope SDK from source:
 
     .. code-block:: console
 
@@ -34,11 +34,11 @@ This is a minimalist example of the SDK in action.
 
 .. code-block:: python
 
-    import kaleidoscope
+    import kscope
     import time
 
     # Establish a client connection to the Kaleidoscope service
-    client = kaleidoscope.Client(gateway_host="llm.cluster.local", gateway_port=3001)
+    client = kscope.Client(gateway_host="llm.cluster.local", gateway_port=3001)
 
     # Show all supported models
     client.models
@@ -71,7 +71,7 @@ This is a minimalist example of the SDK in action.
     text_gen.generation['tokens'] # display tokens
 
     # Now let's retrieve some activations for a given module layer
-    requested_activations = ['_fsdp_wrapped_module._fpw_module.decoder.layers.0._fsdp_wrapped_module._fpw_module']
+    requested_activations = ['decoder.layers.0']
     activations = opt_model.get_activations("What are activations?", requested_activations)
 
 
@@ -82,8 +82,8 @@ Users must authenticate using their Vector Institute cluster credentials. This c
 
 .. code-block:: console
 
-    >>> import kaleidoscope
-    >>> client = kaleidoscope.Client(gateway_host="llm.cluster.local", gateway_port=3001)
+    >>> import kscope
+    >>> client = kscope.Client(gateway_host="llm.cluster.local", gateway_port=3001)
     You must authenticate with your LDAP credentials to use the Kaleidoscope service
     Username: <username>
     Password: <password>

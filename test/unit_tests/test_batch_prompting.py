@@ -1,5 +1,5 @@
 import pytest
-import kaleidoscope
+import kscope
 
 
 class TestBatchPrompting:
@@ -7,7 +7,7 @@ class TestBatchPrompting:
     _host = "llm.cluster.local"
     _port = 4001
     model_name = "OPT-175B"  # "OPT-6.7B"
-    _client = kaleidoscope.Client(gateway_host=_host, gateway_port=_port)
+    _client = kscope.Client(gateway_host=_host, gateway_port=_port)
     _model = _client.load_model(model_name)
     _requested_activation = ["decoder.layers.30.fc1"]
 

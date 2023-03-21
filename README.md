@@ -1,3 +1,5 @@
+![kaleiodsciope-logo](https://user-images.githubusercontent.com/72175053/226011498-dbdfa2dc-f09d-4fbf-a1db-8b6deccb3fec.png)
+-----------------
 # Kaleidoscope-SDK
 ![PyPI](https://img.shields.io/pypi/v/kscope)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/kscope)
@@ -53,12 +55,12 @@ on the Vector Institute Vaughan cluster.
 
 ```python
 #!/usr/bin/env python3
-import kaleidoscope
+import kscope
 import time
 
 # Establish a client connection to the Kaleidoscope service
 # If you have not previously authenticated with the service, you will be prompted to now
-client = kaleidoscope.Client(gateway_host="llm.cluster.local", gateway_port=3001)
+client = kscope.Client(gateway_host="llm.cluster.local", gateway_port=3001)
 
 # See which models are supported
 client.models
@@ -75,7 +77,7 @@ while opt_model.state != "ACTIVE":
     time.sleep(1)
 
 # Sample text generation w/ input parameters
-text_gen = opt_model.generate("What is the answer to life, the universe, and everything?", {'max_tokens': 5, 'top_k': 4, 'top_p': 3, 'rep_penalty': 1, 'temperature': 0.5})
+text_gen = opt_model.generate("What is the answer to life, the universe, and everything?", {'max_tokens': 5, 'top_k': 4, 'temperature': 0.5})
 dir(text_gen) # display methods associated with generated text object
 text_gen.generation['text'] # display only text
 text_gen.generation['logprobs'] # display logprobs

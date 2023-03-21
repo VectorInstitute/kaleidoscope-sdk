@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="kscope",
-    version="0.4.0",
+    version="0.4.1",
     description="A user toolkit for analyzing and interfacing with Large Language Models (LLMs)",
     long_description=long_description,
     long_description_content_type="text/markdown",

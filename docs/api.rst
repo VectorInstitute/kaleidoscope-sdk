@@ -1,7 +1,7 @@
 API
 ===
 
-.. currentmodule:: kaleidoscope
+.. currentmodule:: kscope
 
 .. autoclass:: Client
     :members:

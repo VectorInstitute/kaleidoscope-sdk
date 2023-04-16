@@ -98,7 +98,7 @@ Full documentation and API reference are available at: http://kaleidoscope-sdk.r
 
 
 ## Contributing
-Contributing to kaleidoscope is welcomed. See [Contributing](CONTRIBUTING) for
+Contributing to kaleidoscope is welcomed. See [Contributing](CONTRIBUTING.md) for
 guidelines.
 
 

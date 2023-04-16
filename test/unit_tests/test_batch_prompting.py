@@ -1,7 +1,11 @@
 import pytest
 import kscope
+import socket
+
+hostname = socket.gethostname()
 
 
+@pytest.mark.skipif(hostname != "llm", reason="tests for on-premise only")
 class TestBatchPrompting:
 
     _host = "llm.cluster.local"

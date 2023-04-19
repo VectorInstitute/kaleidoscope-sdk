@@ -1,6 +1,7 @@
+"""Module providing metadata for kscope."""
 from setuptools import setup
 
-with open("README.md", "r") as fh:
+with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
@@ -9,7 +10,8 @@ setup(
     description="A user toolkit for analyzing and interfacing with Large Language Models (LLMs)",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    keywords="python nlp machine-learning deep-learning distributed-computing neural-networks tensor llm",
+    keywords="python nlp machine-learning deep-learning distributed-computing \
+    neural-networks tensor llm",
     requires_python=">=3.7",
     url="https://github.com/VectorInstitute/kaleidoscope-sdk",
     author=["Vector AI Engineering"],

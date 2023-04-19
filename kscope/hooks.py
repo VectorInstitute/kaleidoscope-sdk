@@ -1,11 +1,9 @@
+"""Module for calls using Pytorch hooks"""
 from types import SimpleNamespace
 
 import torch
 
-"""save data in these hooks
-
-next gen will be web pdb
-"""
+# save data in these hooks next gen will be web pdb
 
 
 class TestForwardHook(SimpleNamespace):

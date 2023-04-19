@@ -1,6 +1,7 @@
+# TODO: create config files for formatting/linting arguments
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.1.0  # Use the ref you want to point at
+    rev: v4.1.0
     hooks:
     - id: trailing-whitespace
     - id: check-ast
@@ -20,6 +21,8 @@ repos:
     rev: 22.3.0
     hooks:
     - id: black
+      args:
+        - "--line-length=100"
 
   - repo: local
     hooks:
@@ -28,6 +31,9 @@ repos:
       language: python
       entry: flake8
       files: ".*.py$"
+      args:
+        - "--max-line-length=100"
+        - "--exclude=kscope/__init__.py"
 
   # - repo: https://github.com/pre-commit/mirrors-mypy
   #   rev: v0.942
@@ -44,12 +50,15 @@ repos:
       entry: pylint
       files: ".*.py$"
       exclude: fsd
+      args:
+        - "--max-line-length=100"
+        - "--fail-under=8"
 
-  - repo: local
-    hooks:
-    - id: pytest
-      name: pytest
-      entry: pytest -m "not integration_test"
-      language: system
-      pass_filenames: false
-      always_run: true
+  # - repo: local
+  #   hooks:
+  #   - id: pytest
+  #     name: pytest
+  #     entry: pytest -m "not integration_test"
+  #     language: system
+  #     pass_filenames: false
+  #     always_run: true

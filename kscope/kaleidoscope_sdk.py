@@ -241,7 +241,8 @@ class Model:
     def generate(self, prompts: Union[str, List[str]], generation_config: Dict = None):
         """Generates text from the model instance
 
-        :param prompts: (str or List[str]) Single prompt or list of prompts to generate from
+        :param prompts: (str or List[str]) Single prompt or list of prompts to generate from.
+        Supports upto 8 prompts in a single request.
         :param kwargs: (dict) Additional arguments to pass to the model
         """
         if generation_config is None:
@@ -260,7 +261,8 @@ class Model:
         generation_config: Dict = None,
     ):
         """Gets activations from the model instance
-        :param prompts: (str or List[str]) Single prompt or list of prompts to generate from
+        :param prompts: (str or List[str]) Single prompt or list of prompts to generate from.
+        Supports upto 8 prompts in a single request.
         :param module_names: (List[str]) The layer to get activations from
         """
         if generation_config is None:

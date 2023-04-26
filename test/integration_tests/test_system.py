@@ -1,39 +1,47 @@
 # Happy path test for on-prem
-import kscope
 import pytest
 import os
 import socket
+import time
+
+hostname = socket.gethostname()
 
 
 @pytest.mark.skipif(hostname != "llm", reason="tests for on-premise only")
 class TestSystem:
+    # Authenticate before running to ensure service is functional end-to-end
+    import kscope
 
-    _llm = None
+    client = kscope.Client(
+        gateway_host="localhost", gateway_port=5001
+    )  # Leverage staging environment
 
-    def __init__(self):
-        self.client = kscope.Client(gateway_host="localhost", gateway_port=3001)
-
-    def test_get_model():
-        assert len(client.models) >= 1
-
-    @pytest.mark.timeout(120)
-    def test_load_model():
-        # Use 6.7B for testing purposes
+    @pytest.fixture
+    def model(self):
         _llm = self.client.load_model("OPT-6.7B")
-        while _llm.state != "ACTIVE":
-            time.sleep(1)
-        assert _llm.state == "ACTIVE"
+        return _llm
 
-    def test_text_gen_length():
-        text_gen = _llm.generate(
+    def test_get_model(self):
+        assert len(self.client.models) >= 1
+
+    def test_load_model(self, model):
+        timeout = time.time() + 60 * 5  # Period of 5 minutes
+        while model.state != "ACTIVE" and time.time() < timeout:
+            time.sleep(1)
+            print("Loading OPT-6.7B")
+        assert model.state == "ACTIVE"
+
+    def test_text_gen_length(self, model):
+        text_gen = model.generate(
             "What is AI?", {"max_tokens": 10, "top_p": 2, "temperature": 0.4}
         )
         assert len(text_gen.generation["text"][0]) > 1 and len(
             text_gen.generation["logprobs"][0]
         ) == len(text_gen.generation["tokens"][0])
 
-    def test_text_gen_nominal():
-        text_gen = _llm.generate(
+    # Simple ISP tests
+    def test_text_gen_nominal(self, model):
+        text_gen = model.generate(
             "What is AI?", {"max_tokens": 10, "top_p": 2, "temperature": 0.4}
         )
         assert (
@@ -41,8 +49,8 @@ class TestSystem:
             and type(text_gen.generation["logprobs"][0][0]) == float
         )
 
-    def test_text_gen_lower_bound():
-        text_gen = _llm.generate(
+    def test_text_gen_lower_bound(self, model):
+        text_gen = model.generate(
             "What is AI?", {"max_tokens": 0, "top_p": 0, "temperature": 0.0}
         )
         assert (
@@ -50,18 +58,18 @@ class TestSystem:
             and len(text_gen.generation["logprobs"][0]) == 0
         )
 
-    def test_text_gen_upper_bound():
-        text_gen = _llm.generate(
+    def test_text_gen_upper_bound(self, model):
+        text_gen = model.generate(
             "What is AI?",
             {"max_tokens": 60, "top_p": 10.0, "temperature": 10.0, "n": 2},
         )
         assert text_gen.generation["text"]
         assert text_gen.generation["logprobs"]
 
-    def test_text_gen_upper_bound():
-        assert len(_llm.module_names) > 1
+    def test_text_gen_upper_bound(self, model):
+        assert len(model.module_names) > 1
 
-    def test_activation_retireval():
+    def test_activation_retireval(self, model):
         requested_activations = ["decoder.layers.0"]
-        activations = _llm.get_activations("Inference", requested_activations)
-        assert len(activations) > 1 and activations
+        activations = model.get_activations("Inference", requested_activations)
+        assert len(activations) > 1

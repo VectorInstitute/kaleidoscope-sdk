@@ -2,9 +2,18 @@
 import pytest
 import os
 import socket
+from pathlib import Path
 import time
 
 hostname = socket.gethostname()
+
+# A setup method to initialize the Client class in kaleidoscope_sdk.py
+JWT_TOKEN_FILE = Path(Path.home() / ".kaleidoscope.jwt")
+
+
+def remove_jwt_system_file():
+    if JWT_TOKEN_FILE.exists():
+        os.remove(JWT_TOKEN_FILE)
 
 
 @pytest.mark.skipif(hostname != "llm", reason="tests for on-premise only")
@@ -15,6 +24,8 @@ class TestSystem:
     client = kscope.Client(
         gateway_host="localhost", gateway_port=5001
     )  # Leverage staging environment
+
+    client.authenticate()
 
     @pytest.fixture
     def model(self):

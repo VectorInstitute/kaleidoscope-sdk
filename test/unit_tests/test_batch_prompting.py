@@ -2,6 +2,7 @@ import pytest
 import kscope
 import socket
 from pathlib import Path
+import os
 
 hostname = socket.gethostname()
 

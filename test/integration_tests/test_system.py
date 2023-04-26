@@ -4,6 +4,7 @@ import os
 import socket
 from pathlib import Path
 import time
+import kscope
 
 hostname = socket.gethostname()
 
@@ -19,21 +20,21 @@ def remove_jwt_system_file():
 @pytest.mark.skipif(hostname != "llm", reason="tests for on-premise only")
 class TestSystem:
     # Authenticate before running to ensure service is functional end-to-end
-    import kscope
-
-    client = kscope.Client(
-        gateway_host="localhost", gateway_port=5001
-    )  # Leverage staging environment
-
-    client.authenticate()
 
     @pytest.fixture
-    def model(self):
-        _llm = self.client.load_model("OPT-6.7B")
+    def client_config(self):
+        client = kscope.Client(
+            gateway_host="localhost", gateway_port=5001
+        )  # Leverage staging environment
+        return client
+
+    @pytest.fixture
+    def model(self, client_config):
+        _llm = client_config.load_model("OPT-6.7B")
         return _llm
 
-    def test_get_model(self):
-        assert len(self.client.models) >= 1
+    def test_get_model(self, client_config):
+        assert len(client_config.models) >= 1
 
     def test_load_model(self, model):
         timeout = time.time() + 60 * 5  # Period of 5 minutes

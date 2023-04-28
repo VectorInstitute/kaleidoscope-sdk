@@ -11,6 +11,9 @@ hostname = socket.gethostname()
 # A setup method to initialize the Client class in kaleidoscope_sdk.py
 JWT_TOKEN_FILE = Path(Path.home() / ".kaleidoscope.jwt")
 
+client = kscope.Client(gateway_host="localhost", gateway_port=4001)
+client.authenticate()
+
 
 def remove_jwt_system_file():
     if JWT_TOKEN_FILE.exists():
@@ -24,7 +27,7 @@ class TestSystem:
     @pytest.fixture
     def client_config(self):
         client = kscope.Client(
-            gateway_host="localhost", gateway_port=5001
+            gateway_host="localhost", gateway_port=4001
         )  # Leverage staging environment
         return client
 

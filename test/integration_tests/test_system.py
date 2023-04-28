@@ -12,6 +12,9 @@ hostname = socket.gethostname()
 JWT_TOKEN_FILE = Path(Path.home() / ".kaleidoscope.jwt")
 
 if not JWT_TOKEN_FILE.exists():
+    if hostname == "llm":
+        client = kscope.Client(gateway_host="localhost", gateway_port=4001)
+        client.authenticate()
     try:
         f = open(JWT_TOKEN_FILE, "w")
         f.write("Sample auth")

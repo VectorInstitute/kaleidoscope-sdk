@@ -77,7 +77,7 @@ while opt_model.state != "ACTIVE":
     time.sleep(1)
 
 # Sample text generation w/ input parameters
-text_gen = opt_model.generate("What is the answer to life, the universe, and everything?", {'max_tokens': 5, 'top_k': 4, 'temperature': 0.5})
+text_gen = opt_model.generate("What is the answer to life, the universe, and everything?", {'max_tokens': 5, 'top_p': 4, 'temperature': 0.5})
 dir(text_gen) # display methods associated with generated text object
 text_gen.generation['text'] # display only text
 text_gen.generation['logprobs'] # display logprobs
@@ -98,7 +98,7 @@ Full documentation and API reference are available at: http://kaleidoscope-sdk.r
 
 
 ## Contributing
-Contributing to kaleidoscope is welcomed. See [Contributing](CONTRIBUTING) for
+Contributing to kaleidoscope is welcomed. See [Contributing](CONTRIBUTING.md) for
 guidelines.
 
 

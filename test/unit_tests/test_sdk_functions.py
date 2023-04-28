@@ -1,3 +1,9 @@
+"""Tests for Kaleidoscope SDK utility functions"""
+import os
+import socket
+from pathlib import Path
+import pytest
+import kscope
 import kscope
 from kscope import GatewaySession, Client
 import pytest
@@ -24,17 +30,20 @@ if not JWT_TOKEN_FILE.exists():
 
 # Verifies the posted data is echoed correctly
 def test_post():
+    """Tests if kscope utils successfully posts data"""
     test_data = "test post data"
     response = kscope.utils.post("https://httpbin.org/post", test_data)
     assert response
 
 
 def test_get():
+    """Tests if kscope utils successfully retrieves data"""
     response = kscope.utils.get("http://ip.jsontest.com")
     assert response
 
 
 def test_check_response():
+    """Tests if errors are successfully handled"""
     with pytest.raises(ValueError):
         kscope.utils.get("https://httpbin.org/status/404")
 

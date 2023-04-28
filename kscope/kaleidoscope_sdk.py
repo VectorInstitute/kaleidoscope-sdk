@@ -1,21 +1,23 @@
+"""Main module for the Kaleidoscope SDK"""
 from collections import namedtuple
 from functools import cached_property, partial
 from getpass import getpass
 import json
-import requests
 from pathlib import Path
 import sys
-import time
 from typing import Dict, List, Optional, Union
 from urllib.parse import urljoin
+import time
+import requests
 
-from .hooks import TestForwardHook
 from .utils import get, post, decode_str
 
 JWT_TOKEN_FILE = Path(Path.home() / ".kaleidoscope.jwt")
 
 
 class Client:
+    """Class for Kaleidoscope client"""
+
     def __init__(
         self,
         gateway_host: str,
@@ -23,7 +25,8 @@ class Client:
         auth_key: Optional[str] = None,
         verbose: bool = False,
     ):
-        """Initializes the Kaleidoscope client which faciliates communication with the gateway service
+        """Initializes the Kaleidoscope client which faciliates
+           communication with the gateway service
 
         :param gateway_host: The host of the gateway service
         :param gateway_port: The port of the gateway service
@@ -37,12 +40,13 @@ class Client:
             self._session = GatewaySession(gateway_host, gateway_port)
 
             if JWT_TOKEN_FILE.exists():
-                with open(JWT_TOKEN_FILE, "r") as f:
-                    auth_key = f.read()
+                with open(JWT_TOKEN_FILE, "r", encoding="utf-8") as token_file:
+                    auth_key = token_file.read()
             else:
                 try:
                     print(
-                        "You must authenticate with your LDAP credentials to use the Kaleidoscope service"
+                        "You must authenticate with your LDAP \
+                        credentials to use the Kaleidoscope service"
                     )
                     auth_key = self.authenticate()
                 except Exception as err:
@@ -67,12 +71,11 @@ class Client:
             if result.status_code == 200:
                 print("Login successful.")
                 auth_key = json.loads(result.text)["token"]
-                with open(JWT_TOKEN_FILE, "w") as f:
-                    f.write(auth_key)
+                with open(JWT_TOKEN_FILE, "w", encoding="utf-8") as token_file:
+                    token_file.write(auth_key)
                 return auth_key
-            else:
-                print(f"Authentication failed: {json.loads(result.text)['msg']}")
-                num_tries += 1
+            print(f"Authentication failed: {json.loads(result.text)['msg']}")
+            num_tries += 1
 
         raise Exception("Too many failed login attempts.")
 
@@ -90,7 +93,8 @@ class Client:
         """Loads a model from the gateway service
 
         :param model_name: (str) The name of the model to load
-        :param wait_for_active: (bool) Whether to wait for the model to become active before returning
+        :param wait_for_active: (bool) Whether to wait for the model to
+                                become active before returning
         """
 
         model_instance_response = self._session.create_model_instance(model_name)
@@ -118,7 +122,10 @@ class GatewaySession:
     """A session for a model instance"""
 
     def __init__(
-        self, gateway_host: str, gateway_port: int, auth_key: Optional[str] = None
+        self,
+        gateway_host: str,
+        gateway_port: int,
+        auth_key: Optional[str] = None,
     ):
         self.gateway_host = gateway_host
         self.gateway_port = gateway_port
@@ -128,21 +135,25 @@ class GatewaySession:
         self.create_addr = partial(urljoin, self.base_addr)
 
     def authenticate(self, username: str, password: str):
+        """Authenticates based upon username and password entry"""
         url = self.create_addr("authenticate")
-        response = requests.post(url, auth=(username, password))
+        response = requests.post(url, auth=(username, password), timeout=300)
         return response
 
     def get_models(self):
+        """Gets model name list from client"""
         url = self.create_addr("models")
         response = get(url)
         return response
 
     def get_model_instances(self):
+        """Gets model instances dictionary from client"""
         url = self.create_addr("models/instances")
         response = get(url)
         return response
 
     def create_model_instance(self, model_name: str):
+        """Creates a model instance for a provided model name"""
         url = self.create_addr("models/instances")
         body = {"name": model_name}
         response = post(url, body, auth_key=self.auth_key)
@@ -150,19 +161,24 @@ class GatewaySession:
         return response
 
     def get_model_instance(self, model_instance_id: str):
+        """Gets the model instances based on model id"""
         url = self.create_addr(f"models/instances/{model_instance_id}")
 
         response = get(url, auth_key=self.auth_key)
         return response
 
     def get_model_instance_module_names(self, model_instance_id: str):
+        """Gets model instance module names"""
         url = self.create_addr(f"models/instances/{model_instance_id}/module_names")
 
         response = get(url, auth_key=self.auth_key)
         return response
 
     def generate(
-        self, model_instance_id: str, prompts: List[str], generation_config: Dict
+        self,
+        model_instance_id: str,
+        prompts: List[str],
+        generation_config: Dict,
     ):
         """Generates text from the model instance"""
 
@@ -182,9 +198,7 @@ class GatewaySession:
     ):
         """Gets activations from the model instance"""
 
-        url = self.create_addr(
-            f"models/instances/{model_instance_id}/generate_activations"
-        )
+        url = self.create_addr(f"models/instances/{model_instance_id}/generate_activations")
         body = {
             "prompts": prompts,
             "module_names": module_names,
@@ -197,9 +211,9 @@ class GatewaySession:
 
 
 class Model:
-    def __init__(
-        self, model_instance_id: str, model_name: str, session: GatewaySession
-    ):
+    """Class for abstracting a large langugage model"""
+
+    def __init__(self, model_instance_id: str, model_name: str, session: GatewaySession):
         """Initializes a model instance
 
         :param client: (Client) Kaleidoscope client that this model belongs to
@@ -224,33 +238,35 @@ class Model:
         """Checks if the model instance is active"""
         return self.state == "ACTIVE"
 
-    def generate(self, prompts: Union[str, List[str]], generation_config: Dict = {}):
+    def generate(self, prompts: Union[str, List[str]], generation_config: Dict = None):
         """Generates text from the model instance
 
         :param prompts: (str or List[str]) Single prompt or list of prompts to generate from.
         Supports upto 8 prompts in a single request.
         :param kwargs: (dict) Additional arguments to pass to the model
         """
+        if generation_config is None:
+            generation_config = {}
         if isinstance(prompts, str):
             prompts = [prompts]
-        generation_response = self._session.generate(
-            self.id, prompts, generation_config
-        )
-        Generation = namedtuple("Generation", generation_response.keys())
+        generation_response = self._session.generate(self.id, prompts, generation_config)
+        generation = namedtuple("Generation", generation_response.keys())
 
-        return Generation(**generation_response)
+        return generation(**generation_response)
 
     def get_activations(
         self,
         prompts: Union[str, List[str]],
         module_names: List[str],
-        generation_config: Dict = {},
+        generation_config: Dict = None,
     ):
         """Gets activations from the model instance
         :param prompts: (str or List[str]) Single prompt or list of prompts to generate from.
         Supports upto 8 prompts in a single request.
         :param module_names: (List[str]) The layer to get activations from
         """
+        if generation_config is None:
+            generation_config = {}
         if isinstance(prompts, str):
             prompts = [prompts]
         activations_response = self._session.get_activations(
@@ -262,5 +278,5 @@ class Model:
                     activations_response["activations"][idx][elm]
                 )
 
-        Activations = namedtuple("Activations", activations_response.keys())
-        return Activations(**activations_response)
+        activations = namedtuple("Activations", activations_response.keys())
+        return activations(**activations_response)

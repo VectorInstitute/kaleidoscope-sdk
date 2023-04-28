@@ -10,10 +10,16 @@ hostname = socket.gethostname()
 # A setup method to initialize the Client class in kaleidoscope_sdk.py
 JWT_TOKEN_FILE = Path(Path.home() / ".kaleidoscope.jwt")
 
-
-def remove_jwt_system_file():
-    if JWT_TOKEN_FILE.exists():
-        os.remove(JWT_TOKEN_FILE)
+if not JWT_TOKEN_FILE.exists():
+    if hostname == "llm":
+        client = kscope.Client(gateway_host="localhost", gateway_port=4001)
+        client.authenticate()
+    else:
+        try:
+            f = open(JWT_TOKEN_FILE, "w")
+            f.write("Sample auth")
+        finally:
+            f.close()
 
 
 # Verifies the posted data is echoed correctly
@@ -38,7 +44,7 @@ class TestSDKUtils:
     @pytest.fixture
     def session(self):
         """Setup reusable client testing config"""
-        session = GatewaySession("localhost", 5001, "test_auth_key")
+        session = GatewaySession("localhost", 4001, "test_auth_key")
         return session
 
     # def test_client_null_input(self):
@@ -54,7 +60,7 @@ class TestSDKUtils:
 
     def test_client_port_input(self, session):
         """Verify instantiated client port"""
-        assert session.gateway_port == 5001
+        assert session.gateway_port == 4001
 
     def test_client_auth_input(self, session):
         """Verify authentication with input and non-existing JWT file"""
@@ -64,7 +70,7 @@ class TestSDKUtils:
 
     def test_client_auth_existing_input(self):
         """Verify authentication from existing JWT file without input"""
-        session = GatewaySession("localhost", 5001, "test_auth")
+        session = GatewaySession("localhost", 4001, "test_auth")
         if JWT_TOKEN_FILE.exists():
             os.remove(JWT_TOKEN_FILE)
         try:
@@ -76,7 +82,7 @@ class TestSDKUtils:
 
     def test_client_base_address(self, session):
         """Verify client base address"""
-        assert session.base_addr == "http://localhost:5001/"
+        assert session.base_addr == "http://localhost:4001/"
 
     def test_client_get_models(self, session):
         """Verify client model instances data structure"""
@@ -85,12 +91,12 @@ class TestSDKUtils:
     def test_client_load_model(self):
         """Verify unacceptable model load"""
         with pytest.raises(ValueError):
-            session = Client("localhost", 5001)
+            session = Client("localhost", 4001)
             session.load_model("test")
 
     # def test_client_load_model(self):
     #     """Verify activate OPT model base address"""
-    #     session = Client("localhost", 5001)
+    #     session = Client("localhost", 4001)
     #     session.authenticate() # Leverage valid credentials
     #     opt_model = session.load_model("OPT")
-    #     assert opt_model.base_addr == "http://localhost:5001/models/OPT/"
+    #     assert opt_model.base_addr == "http://localhost:4001/models/OPT/"

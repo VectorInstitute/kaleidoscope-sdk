@@ -6,20 +6,26 @@ from pathlib import Path
 import time
 import kscope
 
+
+def authenticate_user():
+    """A setup to authenticate the user to a client or write dummy data if testing on CI/CD workflows"""
+    JWT_TOKEN_FILE = Path(Path.home() / ".kaleidoscope.jwt")
+
+    if not JWT_TOKEN_FILE.exists():
+        if hostname == "llm":
+            client = kscope.Client(gateway_host="localhost", gateway_port=4001)
+            client.authenticate()
+        else:
+            try:
+                f = open(JWT_TOKEN_FILE, "w")
+                f.write("Sample auth")
+            finally:
+                f.close()
+
+
 hostname = socket.gethostname()
 
-# A setup method to initialize the Client class in kaleidoscope_sdk.py
-JWT_TOKEN_FILE = Path(Path.home() / ".kaleidoscope.jwt")
-
-if not JWT_TOKEN_FILE.exists():
-    if hostname == "llm":
-        client = kscope.Client(gateway_host="localhost", gateway_port=4001)
-        client.authenticate()
-    try:
-        f = open(JWT_TOKEN_FILE, "w")
-        f.write("Sample auth")
-    finally:
-        f.close()
+authenticate_user()
 
 
 @pytest.mark.skipif(hostname != "llm", reason="tests for on-premise only")

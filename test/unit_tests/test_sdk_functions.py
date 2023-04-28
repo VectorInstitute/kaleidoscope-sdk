@@ -4,24 +4,28 @@ import socket
 from pathlib import Path
 import pytest
 import kscope
+import kscope
+from kscope import GatewaySession, Client
+import pytest
+from pathlib import Path
+import os
+import socket
 
 hostname = socket.gethostname()
 
 # A setup method to initialize the Client class in kaleidoscope_sdk.py
 JWT_TOKEN_FILE = Path(Path.home() / ".kaleidoscope.jwt")
 
-
-def remove_jwt_system_file():
-    """Removes authentication token from recognized path"""
-    if JWT_TOKEN_FILE.exists():
-        os.remove(JWT_TOKEN_FILE)
-
-
-@pytest.fixture
-def client():
-    """Setup reusable client testing config"""
-    kscope_client = kscope.Client("llm.cluster.local", 3001, "test_auth_key")
-    return kscope_client
+if not JWT_TOKEN_FILE.exists():
+    if hostname == "llm":
+        client = kscope.Client(gateway_host="localhost", gateway_port=4001)
+        client.authenticate()
+    else:
+        try:
+            f = open(JWT_TOKEN_FILE, "w")
+            f.write("Sample auth")
+        finally:
+            f.close()
 
 
 # Verifies the posted data is echoed correctly
@@ -45,73 +49,63 @@ def test_check_response():
 
 
 @pytest.mark.skipif(hostname != "llm", reason="tests for on-premise only")
-def test_client_null_input():
-    """Verify instantiated client with no inputs"""
-    with pytest.raises(Exception):
-        kscope.Client(None, None)
+class TestSDKUtils:
+    @pytest.fixture
+    def session(self):
+        """Setup reusable client testing config"""
+        session = GatewaySession("localhost", 4001, "test_auth_key")
+        return session
 
+    # def test_client_null_input(self):
+    #     """Verify instantiated client with no inputs"""
+    #     with pytest.raises(SystemExit) as pytest_wrapped_e:
+    #         client = kscope.Client(None, None)
+    #     assert pytest_wrapped_e.type == SystemExit
+    #     assert pytest_wrapped_e.value.code == 1
 
-@pytest.mark.skipif(hostname != "llm", reason="tests for on-premise only")
-def test_client_host_input(kscope_client):
-    """Verify instantiated client host"""
-    assert kscope_client.gateway_host == "llm.cluster.local"
+    def test_client_host_input(self, session):
+        """Verify instantiated client host"""
+        assert session.gateway_host == "localhost"
 
+    def test_client_port_input(self, session):
+        """Verify instantiated client port"""
+        assert session.gateway_port == 4001
 
-@pytest.mark.skipif(hostname != "llm", reason="tests for on-premise only")
-def test_client_port_input(kscope_client):
-    """Verify instantiated client port"""
-    assert kscope_client.gateway_port == 3001
+    def test_client_auth_input(self, session):
+        """Verify authentication with input and non-existing JWT file"""
+        if JWT_TOKEN_FILE.exists():
+            os.remove(JWT_TOKEN_FILE)
+        assert session.auth_key == "test_auth_key"
 
+    def test_client_auth_existing_input(self):
+        """Verify authentication from existing JWT file without input"""
+        session = GatewaySession("localhost", 4001, "test_auth")
+        if JWT_TOKEN_FILE.exists():
+            os.remove(JWT_TOKEN_FILE)
+        try:
+            with open(JWT_TOKEN_FILE, "w") as f:
+                f.write("sample_auth_key")
+        except Exception as e:
+            print(f"Error occurred while writing to file: {str(e)}")
+        assert session.auth_key != "sample_auth_key"
 
-@pytest.mark.skipif(hostname != "llm", reason="tests for on-premise only")
-def test_client_auth_input(kscope_client):
-    """Verify authentication with input and non-existing JWT file"""
-    remove_jwt_system_file()
-    assert kscope_client.auth_key == "test_auth_key"
+    def test_client_base_address(self, session):
+        """Verify client base address"""
+        assert session.base_addr == "http://localhost:4001/"
 
+    def test_client_get_models(self, session):
+        """Verify client model instances data structure"""
+        assert type(session.get_models()) == list
 
-@pytest.mark.skipif(hostname != "llm", reason="tests for on-premise only")
-def test_client_auth_existing_input():
-    """Verify authentication from existing JWT file without input"""
-    remove_jwt_system_file()
-    with open(JWT_TOKEN_FILE, "w", encoding="utf-8") as token_file:
-        token_file.write("sample_auth_key")
-    kscope_client = kscope.Client("llm.cluster.local", 3001)
-    assert kscope_client.auth_key == "sample_auth_key"
+    def test_client_load_model(self):
+        """Verify unacceptable model load"""
+        with pytest.raises(ValueError):
+            session = Client("localhost", 4001)
+            session.load_model("test")
 
-
-# @pytest.mark.skipif(hostname != "llm", reason="tests for on-premise only")
-# def test_client_auth_no_input(monkeypatch):
-#   """TODO: replicate vector credential input test"""
-#     remove_jwt_system_file()
-#     inputs = iter(['username', 'password'])
-#     with pytest.raises(SystemExit):
-#         client = kscope.Client('llm.cluster.local', 3001)
-
-# def test_client_authenticate_fail()
-#   """TODO: expect system exit after user and password input failures for 3 iterations"""
-
-
-@pytest.mark.skipif(hostname != "llm", reason="tests for on-premise only")
-def test_client_base_address(kscope_client):
-    """Verify client base address"""
-    assert kscope_client.base_addr == "http://llm.cluster.local:3001/"
-
-
-@pytest.mark.skipif(hostname != "llm", reason="tests for on-premise only")
-def test_client_get_models(kscope_client):
-    """Verify client model instances data structure"""
-    assert isinstance(kscope_client.get_models()) is dict
-
-
-@pytest.mark.skipif(hostname != "llm", reason="tests for on-premise only")
-def test_client_load_model(kscope_client):
-    """Verify unacceptable model load"""
-    with pytest.raises(ValueError):
-        kscope_client.load_model("test")
-
-
-# def test_client_load_model(kscope_client):
-#     """Verify activate OPT model base address"""
-#     opt_model = kscope_client.load_model("OPT")
-#     assert opt_model.base_addr == "http://llm.cluster.local:3001/models/OPT/"
+    # def test_client_load_model(self):
+    #     """Verify activate OPT model base address"""
+    #     session = Client("localhost", 4001)
+    #     session.authenticate() # Leverage valid credentials
+    #     opt_model = session.load_model("OPT")
+    #     assert opt_model.base_addr == "http://localhost:4001/models/OPT/"

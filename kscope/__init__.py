@@ -1,6 +1,7 @@
 """SDK metadata"""
 from .kaleidoscope_sdk import Client
 from .kaleidoscope_sdk import Model
+from .kaleidoscope_sdk import GatewaySession
 
 # SDK metadata
 __version__ = "0.5.0"

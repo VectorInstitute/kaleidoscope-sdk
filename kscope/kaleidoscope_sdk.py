@@ -6,11 +6,11 @@ import requests
 from pathlib import Path
 import sys
 import time
-from typing import Dict, List, Optional, Union
+from typing import Callable, Dict, List, Optional, Union
 from urllib.parse import urljoin
 
 from .hooks import TestForwardHook
-from .utils import get, post, decode_str
+from .utils import get, post, decode_str, encode_obj
 
 JWT_TOKEN_FILE = Path(Path.home() / ".kaleidoscope.jwt")
 
@@ -195,6 +195,28 @@ class GatewaySession:
 
         return response
 
+    def edit_activations(
+        self,
+        model_instance_id: str,
+        prompts: List[str],
+        modules: Dict[str, Optional[Callable]],
+        generation_config: Dict,
+    ):
+        """Gets activations from the model instance"""
+
+        url = self.create_addr(
+            f"models/instances/{model_instance_id}/edit_activations"
+        )
+        body = {
+            "prompts": prompts,
+            "modules": modules,
+            "generation_config": generation_config,
+        }
+
+        response = post(url, body, auth_key=self.auth_key)
+
+        return response
+
 
 class Model:
     def __init__(
@@ -255,6 +277,31 @@ class Model:
             prompts = [prompts]
         activations_response = self._session.get_activations(
             self.id, prompts, module_names, generation_config
+        )
+        for idx in range(len(activations_response["activations"])):
+            for elm in activations_response["activations"][idx]:
+                activations_response["activations"][idx][elm] = decode_str(
+                    activations_response["activations"][idx][elm]
+                )
+
+        Activations = namedtuple("Activations", activations_response.keys())
+        return Activations(**activations_response)
+
+    def edit_activations(
+        self,
+        prompts: Union[str, List[str]],
+        modules: Dict[str, Optional[Callable]],
+        generation_config: Dict = {},
+    ):
+        """Edits activations for the model instance
+        :param prompts: (str or List[str]) Single prompt or list of prompts to generate from
+        :param modules: (Dict[str, Optional[Callable]]) The layer names and manipulation functions to apply to them
+        """
+        if isinstance(prompts, str):
+            prompts = [prompts]
+        encoded_activation_payload = encode_obj(modules)
+        activations_response = self._session.edit_activations(
+            self.id, prompts, encoded_activation_payload, generation_config
         )
         for idx in range(len(activations_response["activations"])):
             for elm in activations_response["activations"][idx]:

@@ -91,6 +91,26 @@ print(opt_model.module_names)
 requested_activations = ['decoder.layers.0']
 activations = opt_model.get_activations("What are activations?", requested_activations)
 print(activations)
+
+# Next, let's manipulate the activations in the model. First, we need to import a few more modules.
+import cloudpickle
+import codecs
+import torch
+from torch import Tensor
+from typing import Callable, Dict
+
+# Define a function to manipulate the activations
+def replace_with_ones(act: Tensor) -> Tensor:
+    """Replace an activation with an activation filled with ones."""
+    out = torch.ones_like(act, dtype=act.dtype).cuda()
+    return out
+
+# Now send the edit request
+editing_fns: Dict[str, Callable] = {}
+editing_fns['decoder.layers.0'] = replace_with_ones
+edited_activations = opt_model.edit_activations("Testing activation editing", editing_fns)
+print(edited_activations)
+
 ```
 
 ## Documentation

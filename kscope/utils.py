@@ -2,6 +2,7 @@
 TODOS:
     1. eventually we need to seperate this out to client and server utils
 """
+import cloudpickle
 import logging
 import json
 import requests
@@ -13,6 +14,10 @@ logger = logging.getLogger(__name__)
 
 def decode_str(obj_in_str):
     return pickle.loads(codecs.decode(obj_in_str.encode("utf-8"), "base64"))
+
+
+def encode_obj(obj):
+    return codecs.encode(cloudpickle.dumps(obj), "base64").decode("utf-8")
 
 
 def check_response(resp):

@@ -10,7 +10,7 @@ from typing import Callable, Dict, List, Optional, Union
 from urllib.parse import urljoin
 
 from .hooks import TestForwardHook
-from .utils import get, post, decode_str
+from .utils import get, post, decode_str, encode_obj
 
 JWT_TOKEN_FILE = Path(Path.home() / ".kaleidoscope.jwt")
 
@@ -299,8 +299,9 @@ class Model:
         """
         if isinstance(prompts, str):
             prompts = [prompts]
+        encoded_activation_payload = encode_obj(modules)
         activations_response = self._session.edit_activations(
-            self.id, prompts, modules, generation_config
+            self.id, prompts, encoded_activation_payload, generation_config
         )
         for idx in range(len(activations_response["activations"])):
             for elm in activations_response["activations"][idx]:

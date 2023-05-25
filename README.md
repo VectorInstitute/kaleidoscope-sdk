@@ -99,11 +99,7 @@ import torch
 from torch import Tensor
 from typing import Callable, Dict
 
-# Define an encoder function
-def encode_obj(obj):
-    return codecs.encode(cloudpickle.dumps(obj), "base64").decode("utf-8")
-
-# Also, the actual function to manipulate the activations
+# Define a function to manipulate the activations
 def replace_with_ones(act: Tensor) -> Tensor:
     """Replace an activation with an activation filled with ones."""
     out = torch.ones_like(act, dtype=act.dtype).cuda()
@@ -112,8 +108,7 @@ def replace_with_ones(act: Tensor) -> Tensor:
 # Now send the edit request
 editing_fns: Dict[str, Callable] = {}
 editing_fns['decoder.layers.0'] = replace_with_ones
-encoded_activation_payload = encode_obj(editing_fns)
-edited_activations = opt_model.edit_activations("Testing activation editing", encoded_activation_payload)
+edited_activations = opt_model.edit_activations("Testing activation editing", editing_fns)
 print(edited_activations)
 
 ```

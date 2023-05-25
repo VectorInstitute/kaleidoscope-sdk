@@ -56,11 +56,7 @@ on the Vector Institute Vaughan cluster.
 ```python
 #!/usr/bin/env python3
 import kscope
-import cloudpickle
-import codecs
 import time
-from torch import Tensor
-from typing import Callable, Dict
 
 # Establish a client connection to the Kaleidoscope service
 # If you have not previously authenticated with the service, you will be prompted to now
@@ -96,11 +92,18 @@ requested_activations = ['decoder.layers.0']
 activations = opt_model.get_activations("What are activations?", requested_activations)
 print(activations)
 
-# Next, let's manipulate the activations in the model. First, we need an encoder function.
+# Next, let's manipulate the activations in the model. First, we need to import a few more modules.
+import cloudpickle
+import codecs
+import torch
+from torch import Tensor
+from typing import Callable, Dict
+
+# Define an encoder function
 def encode_obj(obj):
     return codecs.encode(cloudpickle.dumps(obj), "base64").decode("utf-8")
 
-# Also, the actual function to manipulate the model
+# Also, the actual function to manipulate the activations
 def replace_with_ones(act: Tensor) -> Tensor:
     """Replace an activation with an activation filled with ones."""
     out = torch.ones_like(act, dtype=act.dtype).cuda()

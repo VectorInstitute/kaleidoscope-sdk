@@ -70,7 +70,7 @@ client.model_instances
 
 # Get a handle to a model. If this model is not actively running, it will get launched in the background.
 # In this example we want to use the OPT-175B model
-opt_model = client.load_model("OPT-175B")
+opt_model = client.load_model("opt-175b")
 
 # If the model was not actively running, this it could take several minutes to load. Wait for it come online.
 while opt_model.state != "ACTIVE":
@@ -79,7 +79,7 @@ while opt_model.state != "ACTIVE":
 # Sample text generation w/ input parameters
 text_gen = opt_model.generate("What is the answer to life, the universe, and everything?", {'max_tokens': 5, 'top_k': 4, 'temperature': 0.5})
 dir(text_gen) # display methods associated with generated text object
-text_gen.generation['text'] # display only text
+text_gen.generation['sequences'] # display only text
 text_gen.generation['logprobs'] # display logprobs
 text_gen.generation['tokens'] # display tokens
 

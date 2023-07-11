@@ -47,7 +47,7 @@ This is a minimalist example of the SDK in action.
     client.model_instances
 
     # Get a handle to a model. In this example, let's use the OPT-175B model.
-    opt_model = client.load_model("OPT-175B")
+    opt_model = client.load_model("opt-175b")
 
     # If this model is not actively running, it will get launched in the background.
     # In this case, wait until it moves into an "ACTIVE" state before proceeding.
@@ -58,15 +58,15 @@ This is a minimalist example of the SDK in action.
     generation_config = {
         "max_tokens": 5,
         "top_k": 4,
-        "top_p": 3,
-        "rep_penalty": 1,
+        "top_p": 0.3,
+        "repetition_penalty": 1,
         "temperature": 0.5
     }
 
     # Sample text generation w/ input parameters
     text_gen = model.generate("What is the answer to life, the universe, and everything?", **generation_config)
 
-    text_gen.generation['text'] # display only text
+    text_gen.generation['sequences'] # display only text
     text_gen.generation['logprobs'] # display logprobs
     text_gen.generation['tokens'] # display tokens
 

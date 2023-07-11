@@ -240,7 +240,7 @@ class Model:
     @cached_property
     def module_names(self):
         """Returns a list of all module names in this model"""
-        return self._session.get_model_instance_module_names(self.id)["module_names"]
+        return self._session.get_model_instance_module_names(self.id)
 
     def is_active(self):
         """Checks if the model instance is active"""
@@ -283,7 +283,6 @@ class Model:
                 activations_response["activations"][idx][elm] = decode_str(
                     activations_response["activations"][idx][elm]
                 )
-
         Activations = namedtuple("Activations", activations_response.keys())
         return Activations(**activations_response)
 

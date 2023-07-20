@@ -24,7 +24,15 @@ def check_response(resp):
     if not resp.ok:
         if resp.status_code == 422:
             raise ValueError(
-                "Request to {} not sucessful, Error Code: {}, please check your auth key".format(
+                "Request to {} not sucessful, Error Code: {}, your JWT token is invalid or incorrect, \
+                please generate a new one".format(
+                    resp.url, resp.status_code
+                )
+            )
+        elif resp.status_code == 401:
+            raise ValueError(
+                "Request to {} not sucessful, Error Code: {}, your JWT token is expired, please \
+                    generate a new one".format(
                     resp.url, resp.status_code
                 )
             )

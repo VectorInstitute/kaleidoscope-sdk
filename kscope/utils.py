@@ -24,19 +24,21 @@ def check_response(resp):
     if not resp.ok:
         if resp.status_code == 422:
             raise ValueError(
-                "Request to {} not sucessful, Error Code: {}, please check your auth key".format(
+                "Request to {} not sucessful, Error Code: {}, your JWT token is invalid or incorrect, \
+                please delete the previous token at ~/.kaleidoscope.jwt and generate a new one".format(
                     resp.url, resp.status_code
                 )
             )
-        elif resp.status_code == 400:
+        elif resp.status_code == 401:
             raise ValueError(
-                "Request to {} not sucessful, Error Code: {}, please check your request body".format(
+                "Request to {} not sucessful, Error Code: {}, your JWT token is expired, please \
+                    delete the previous token at ~/.kaleidoscope.jwt and generate a new one".format(
                     resp.url, resp.status_code
                 )
             )
         raise ValueError(
-            "Request to {} not sucessful, Error Code: {}".format(
-                resp.url, resp.status_code
+            "Request to {} not sucessful, Error Code: {}, {}".format(
+                resp.url, resp.status_code, resp.json()["msg"]
             )
         )
     logger.debug("addr %s response code %s", resp.url, resp.status_code)

@@ -25,14 +25,14 @@ def check_response(resp):
         if resp.status_code == 422:
             raise ValueError(
                 "Request to {} not sucessful, Error Code: {}, your JWT token is invalid or incorrect, \
-                please generate a new one".format(
+                please delete the previous token at ~/.kaleidoscope.jwt and generate a new one".format(
                     resp.url, resp.status_code
                 )
             )
         elif resp.status_code == 401:
             raise ValueError(
                 "Request to {} not sucessful, Error Code: {}, your JWT token is expired, please \
-                    generate a new one".format(
+                    delete the previous token at ~/.kaleidoscope.jwt and generate a new one".format(
                     resp.url, resp.status_code
                 )
             )

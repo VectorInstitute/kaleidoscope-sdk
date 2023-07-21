@@ -36,15 +36,9 @@ def check_response(resp):
                     resp.url, resp.status_code
                 )
             )
-        elif resp.status_code == 400:
-            raise ValueError(
-                "Request to {} not sucessful, Error Code: {}, please check your request body".format(
-                    resp.url, resp.status_code
-                )
-            )
         raise ValueError(
-            "Request to {} not sucessful, Error Code: {}".format(
-                resp.url, resp.status_code
+            "Request to {} not sucessful, Error Code: {}, {}".format(
+                resp.url, resp.status_code, resp.json()["msg"]
             )
         )
     logger.debug("addr %s response code %s", resp.url, resp.status_code)

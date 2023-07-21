@@ -177,17 +177,17 @@ class GatewaySession:
         self,
         model_instance_id: str,
         prompts: List[str],
-        module_names: List[str],
+        modules: List[str],
         generation_config: Dict,
     ):
         """Gets activations from the model instance"""
 
         url = self.create_addr(
-            f"models/instances/{model_instance_id}/generate_activations"
+            f"models/instances/{model_instance_id}/get_activations"
         )
         body = {
             "prompts": prompts,
-            "module_names": module_names,
+            "modules": modules,
             "generation_config": generation_config,
         }
 
@@ -265,7 +265,7 @@ class Model:
     def get_activations(
         self,
         prompts: Union[str, List[str]],
-        module_names: List[str],
+        modules: List[str],
         generation_config: Dict = {},
     ):
         """Gets activations from the model instance
@@ -276,7 +276,7 @@ class Model:
         if isinstance(prompts, str):
             prompts = [prompts]
         activations_response = self._session.get_activations(
-            self.id, prompts, module_names, generation_config
+            self.id, prompts, modules, generation_config
         )
         for idx in range(len(activations_response["activations"])):
             for elm in activations_response["activations"][idx]:
@@ -302,6 +302,7 @@ class Model:
         activations_response = self._session.edit_activations(
             self.id, prompts, encoded_activation_payload, generation_config
         )
+        print(f"Response: {activations_response}")
         for idx in range(len(activations_response["activations"])):
             for elm in activations_response["activations"][idx]:
                 activations_response["activations"][idx][elm] = decode_str(

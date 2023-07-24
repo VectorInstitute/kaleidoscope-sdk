@@ -302,7 +302,7 @@ class Model:
         activations_response = self._session.edit_activations(
             self.id, prompts, encoded_activation_payload, generation_config
         )
-        print(f"Response: {activations_response}")
+
         for idx in range(len(activations_response["activations"])):
             for elm in activations_response["activations"][idx]:
                 activations_response["activations"][idx][elm] = decode_str(

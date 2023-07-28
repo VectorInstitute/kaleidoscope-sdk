@@ -271,7 +271,7 @@ class Model:
         """Gets activations from the model instance
         :param prompts: (str or List[str]) Single prompt or list of prompts to generate from.
         Supports upto 8 prompts in a single request.
-        :param module_names: (List[str]) The layer to get activations from
+        :param modules: (List[str]) The layer to get activations from
         """
         if isinstance(prompts, str):
             prompts = [prompts]
@@ -302,7 +302,6 @@ class Model:
         activations_response = self._session.edit_activations(
             self.id, prompts, encoded_activation_payload, generation_config
         )
-
         for idx in range(len(activations_response["activations"])):
             for elm in activations_response["activations"][idx]:
                 activations_response["activations"][idx][elm] = decode_str(

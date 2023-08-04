@@ -177,17 +177,17 @@ class GatewaySession:
         self,
         model_instance_id: str,
         prompts: List[str],
-        module_names: List[str],
+        modules: List[str],
         generation_config: Dict,
     ):
         """Gets activations from the model instance"""
 
         url = self.create_addr(
-            f"models/instances/{model_instance_id}/generate_activations"
+            f"models/instances/{model_instance_id}/get_activations"
         )
         body = {
             "prompts": prompts,
-            "module_names": module_names,
+            "modules": modules,
             "generation_config": generation_config,
         }
 
@@ -265,18 +265,18 @@ class Model:
     def get_activations(
         self,
         prompts: Union[str, List[str]],
-        module_names: List[str],
+        modules: List[str],
         generation_config: Dict = {},
     ):
         """Gets activations from the model instance
         :param prompts: (str or List[str]) Single prompt or list of prompts to generate from.
         Supports upto 8 prompts in a single request.
-        :param module_names: (List[str]) The layer to get activations from
+        :param modules: (List[str]) The layer to get activations from
         """
         if isinstance(prompts, str):
             prompts = [prompts]
         activations_response = self._session.get_activations(
-            self.id, prompts, module_names, generation_config
+            self.id, prompts, modules, generation_config
         )
         for idx in range(len(activations_response["activations"])):
             for elm in activations_response["activations"][idx]:

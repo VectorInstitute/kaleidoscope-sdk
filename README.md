@@ -69,15 +69,15 @@ client.models
 client.model_instances
 
 # Get a handle to a model. If this model is not actively running, it will get launched in the background.
-# In this example we want to use the OPT-175B model
-opt_model = client.load_model("opt-175b")
+# In this example we want to use the LLama2 7b model
+llama2_model = client.load_model("llama2-7b")
 
 # If the model was not actively running, this it could take several minutes to load. Wait for it come online.
-while opt_model.state != "ACTIVE":
+while llama2_model.state != "ACTIVE":
     time.sleep(1)
 
 # Sample text generation w/ input parameters
-text_gen = opt_model.generate("What is the answer to life, the universe, and everything?", {'max_tokens': 5, 'top_k': 4, 'temperature': 0.5})
+text_gen = llama2_model.generate("What is Vector Institute?", {'max_tokens': 5, 'top_k': 4, 'temperature': 0.5})
 dir(text_gen) # display methods associated with generated text object
 text_gen.generation['sequences'] # display only text
 text_gen.generation['logprobs'] # display logprobs
@@ -85,11 +85,11 @@ text_gen.generation['tokens'] # display tokens
 
 # Now let's retrieve some activations from the model
 # First, show a list of modules in the neural network
-print(opt_model.module_names)
+print(llama2_model.module_names)
 
 # Setup a request for module acivations for a certain module layer
-requested_activations = ['decoder.layers.0']
-activations = opt_model.get_activations("What are activations?", requested_activations)
+requested_activations = ['layers.0']
+activations = llama2_model.get_activations("What are activations?", requested_activations)
 print(activations)
 
 # Next, let's manipulate the activations in the model. First, we need to import a few more modules.
@@ -107,8 +107,8 @@ def replace_with_ones(act: Tensor) -> Tensor:
 
 # Now send the edit request
 editing_fns: Dict[str, Callable] = {}
-editing_fns['decoder.layers.0'] = replace_with_ones
-edited_activations = opt_model.edit_activations("Testing activation editing", editing_fns)
+editing_fns['layers.0'] = replace_with_ones
+edited_activations = llama2_model.edit_activations("What is Vector Institute?", editing_fns)
 print(edited_activations)
 
 ```
@@ -129,5 +129,5 @@ guidelines.
 ## Citation
 Reference to cite when you use Kaleidoscope in a project or a research paper:
 ```
-Sivaloganathan, J., Coatsworth, M., Willes, J., Choi, M., & Shen, G. (2022). Kaleidoscope. http://VectorInstitute.github.io/kaleidoscope. computer software, Vector Institute for Artificial Intelligence. Retrieved from https://github.com/VectorInstitute/kaleidoscope-sdk.git.
+Willes, J., Choi, M., Coatsworth, M., Shen, G., & Sivaloganathan, J (2022). Kaleidoscope. http://VectorInstitute.github.io/kaleidoscope. computer software, Vector Institute for Artificial Intelligence. Retrieved from https://github.com/VectorInstitute/kaleidoscope-sdk.git.
 ```

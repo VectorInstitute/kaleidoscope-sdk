@@ -46,17 +46,17 @@ This is a minimalist example of the SDK in action.
     # Show all model instances that are currently active
     client.model_instances
 
-    # Get a handle to a model. In this example, let's use the OPT-175B model.
-    opt_model = client.load_model("opt-175b")
+    # Get a handle to a model. In this example, let's use the Llama2 7b model.
+    llama2_model = client.load_model("llama2-7b")
 
     # If this model is not actively running, it will get launched in the background.
     # In this case, wait until it moves into an "ACTIVE" state before proceeding.
-    while opt_model.state != "ACTIVE":
+    while llama2_model.state != "ACTIVE":
         time.sleep(1)
 
     # Now we wnat to generate some text. Start by defining a few generation attributes.
     generation_config = {
-        "max_tokens": 5,
+        "max_tokens": 32,
         "top_k": 4,
         "top_p": 0.3,
         "repetition_penalty": 1,
@@ -64,15 +64,34 @@ This is a minimalist example of the SDK in action.
     }
 
     # Sample text generation w/ input parameters
-    text_gen = model.generate("What is the answer to life, the universe, and everything?", **generation_config)
+    text_gen = model.generate("What is Vector Institute?", **generation_config)
 
     text_gen.generation['sequences'] # display only text
     text_gen.generation['logprobs'] # display logprobs
     text_gen.generation['tokens'] # display tokens
 
     # Now let's retrieve some activations for a given module layer
-    requested_activations = ['decoder.layers.0']
-    activations = opt_model.get_activations("What are activations?", requested_activations)
+    requested_activations = ['layers.0']
+    activations = llama2_model.get_activations("What is Vector Institute?", requested_activations)
+
+    # Next, let's manipulate the activations in the model. First, we need to import a few more modules.
+    import cloudpickle
+    import codecs
+    import torch
+    from torch import Tensor
+    from typing import Callable, Dict
+
+    # Define a function to manipulate the activations
+    def replace_with_ones(act: Tensor) -> Tensor:
+        """Replace an activation with an activation filled with ones."""
+        out = torch.ones_like(act, dtype=act.dtype).cuda()
+        return out
+
+    # Now send the edit request
+    editing_fns: Dict[str, Callable] = {}
+    editing_fns['layers.0'] = replace_with_ones
+    edited_activations = llama2_model.edit_activations("What is Vector Institute?", editing_fns)
+    print(edited_activations)
 
 
 Authentication

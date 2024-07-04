@@ -15,6 +15,10 @@ from .utils import get, post, decode_str, encode_obj
 JWT_TOKEN_FILE = Path(Path.home() / ".kaleidoscope.jwt")
 
 
+class NotSupportedError(Exception):
+    pass
+
+
 class Client:
     def __init__(
         self,
@@ -173,50 +177,6 @@ class GatewaySession:
 
         return response
 
-    def get_activations(
-        self,
-        model_instance_id: str,
-        prompts: List[str],
-        modules: List[str],
-        generation_config: Dict,
-    ):
-        """Gets activations from the model instance"""
-
-        url = self.create_addr(
-            f"models/instances/{model_instance_id}/get_activations"
-        )
-        body = {
-            "prompts": prompts,
-            "modules": modules,
-            "generation_config": generation_config,
-        }
-
-        response = post(url, body, auth_key=self.auth_key)
-
-        return response
-
-    def edit_activations(
-        self,
-        model_instance_id: str,
-        prompts: List[str],
-        modules: Dict[str, Optional[Callable]],
-        generation_config: Dict,
-    ):
-        """Gets activations from the model instance"""
-
-        url = self.create_addr(
-            f"models/instances/{model_instance_id}/edit_activations"
-        )
-        body = {
-            "prompts": prompts,
-            "modules": modules,
-            "generation_config": generation_config,
-        }
-
-        response = post(url, body, auth_key=self.auth_key)
-
-        return response
-
 
 class Model:
     def __init__(
@@ -239,8 +199,7 @@ class Model:
 
     @cached_property
     def module_names(self):
-        """Returns a list of all module names in this model"""
-        return self._session.get_model_instance_module_names(self.id)
+        raise NotSupportedError("Support for the `module_names` method has been discontinued")
 
     def is_active(self):
         """Checks if the model instance is active"""
@@ -268,23 +227,7 @@ class Model:
         modules: List[str],
         generation_config: Dict = {},
     ):
-        """Gets activations from the model instance
-        :param prompts: (str or List[str]) Single prompt or list of prompts to generate from.
-        Supports upto 8 prompts in a single request.
-        :param modules: (List[str]) The layer to get activations from
-        """
-        if isinstance(prompts, str):
-            prompts = [prompts]
-        activations_response = self._session.get_activations(
-            self.id, prompts, modules, generation_config
-        )
-        for idx in range(len(activations_response["activations"])):
-            for elm in activations_response["activations"][idx]:
-                activations_response["activations"][idx][elm] = decode_str(
-                    activations_response["activations"][idx][elm]
-                )
-        Activations = namedtuple("Activations", activations_response.keys())
-        return Activations(**activations_response)
+        raise NotSupportedError("Support for the `get_activations` method has been discontinued")
 
     def edit_activations(
         self,
@@ -296,17 +239,4 @@ class Model:
         :param prompts: (str or List[str]) Single prompt or list of prompts to generate from
         :param modules: (Dict[str, Optional[Callable]]) The layer names and manipulation functions to apply to them
         """
-        if isinstance(prompts, str):
-            prompts = [prompts]
-        encoded_activation_payload = encode_obj(modules)
-        activations_response = self._session.edit_activations(
-            self.id, prompts, encoded_activation_payload, generation_config
-        )
-        for idx in range(len(activations_response["activations"])):
-            for elm in activations_response["activations"][idx]:
-                activations_response["activations"][idx][elm] = decode_str(
-                    activations_response["activations"][idx][elm]
-                )
-
-        Activations = namedtuple("Activations", activations_response.keys())
-        return Activations(**activations_response)
+        raise NotSupportedError("Support for the `edit_activations` method has been discontinued")

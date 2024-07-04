@@ -91,8 +91,3 @@ class TestSystem:
 
     def test_text_gen_upper_bound(self, model):
         assert len(model.module_names) > 1
-
-    def test_activation_retireval(self, model):
-        requested_activations = ["decoder.layers.0"]
-        activations = model.get_activations("Inference", requested_activations)
-        assert len(activations) > 1

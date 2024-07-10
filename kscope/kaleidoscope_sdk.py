@@ -220,23 +220,3 @@ class Model:
         Generation = namedtuple("Generation", generation_response.keys())
 
         return Generation(**generation_response)
-
-    def get_activations(
-        self,
-        prompts: Union[str, List[str]],
-        modules: List[str],
-        generation_config: Dict = {},
-    ):
-        raise NotSupportedError("Support for the `get_activations` method has been discontinued")
-
-    def edit_activations(
-        self,
-        prompts: Union[str, List[str]],
-        modules: Dict[str, Optional[Callable]],
-        generation_config: Dict = {},
-    ):
-        """Edits activations for the model instance
-        :param prompts: (str or List[str]) Single prompt or list of prompts to generate from
-        :param modules: (Dict[str, Optional[Callable]]) The layer names and manipulation functions to apply to them
-        """
-        raise NotSupportedError("Support for the `edit_activations` method has been discontinued")

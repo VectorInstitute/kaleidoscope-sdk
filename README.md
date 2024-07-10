@@ -14,16 +14,12 @@ A user toolkit for analyzing and interfacing with Large Language Models (LLMs)
 
 ``kaleidoscope-sdk`` is a Python module used to interact with large language models
 hosted via the Kaleidoscope service available at: https://github.com/VectorInstitute/kaleidoscope.
-It provides a simple interface to launch LLMs on an HPC cluster, asking them to
-perform basic features like text generation, but also retrieve intermediate
-information from inside the model, such as log probabilities and activations.
+It provides a simple interface to launch LLMs on an HPC cluster and perform basic, fast inference.
 These features are exposed via a few high-level APIs, namely:
 
 * `model_instances` - Shows a list of all active LLMs instantiated by the model service
 * `load_model` - Loads an LLM via the model service
-* `generate` - Returns an LLM text generation based on prompt input
-* `module_names` - Returns all modules names in the LLM neural network
-* `get_activations` - Retrieves all activations for a set of modules
+* `generate` - Returns an LLM text generation based on prompt input, or list of inputs
 
 
 
@@ -69,47 +65,19 @@ client.models
 client.model_instances
 
 # Get a handle to a model. If this model is not actively running, it will get launched in the background.
-# In this example we want to use the LLama2 7b model
-llama2_model = client.load_model("llama2-7b")
+# In this example we want to use the Llama3 8b model
+llama3_model = client.load_model("llama3-8b")
 
 # If the model was not actively running, this it could take several minutes to load. Wait for it come online.
-while llama2_model.state != "ACTIVE":
+while llama3_model.state != "ACTIVE":
     time.sleep(1)
 
 # Sample text generation w/ input parameters
-text_gen = llama2_model.generate("What is Vector Institute?", {'max_tokens': 5, 'top_k': 4, 'temperature': 0.5})
+text_gen = llama3_model.generate("What is Vector Institute?", {'max_tokens': 5, 'top_k': 4, 'temperature': 0.5})
 dir(text_gen) # display methods associated with generated text object
 text_gen.generation['sequences'] # display only text
 text_gen.generation['logprobs'] # display logprobs
 text_gen.generation['tokens'] # display tokens
-
-# Now let's retrieve some activations from the model
-# First, show a list of modules in the neural network
-print(llama2_model.module_names)
-
-# Setup a request for module acivations for a certain module layer
-requested_activations = ['layers.0']
-activations = llama2_model.get_activations("What are activations?", requested_activations)
-print(activations)
-
-# Next, let's manipulate the activations in the model. First, we need to import a few more modules.
-import cloudpickle
-import codecs
-import torch
-from torch import Tensor
-from typing import Callable, Dict
-
-# Define a function to manipulate the activations
-def replace_with_ones(act: Tensor) -> Tensor:
-    """Replace an activation with an activation filled with ones."""
-    out = torch.ones_like(act, dtype=act.dtype).cuda()
-    return out
-
-# Now send the edit request
-editing_fns: Dict[str, Callable] = {}
-editing_fns['layers.0'] = replace_with_ones
-edited_activations = llama2_model.edit_activations("What is Vector Institute?", editing_fns)
-print(edited_activations)
 
 ```
 

@@ -5,12 +5,12 @@ with open("README.md", "r") as fh:
 
 setup(
     name="kscope",
-    version="0.10.0",
+    version="0.11.0",
     description="A user toolkit for analyzing and interfacing with Large Language Models (LLMs)",
     long_description=long_description,
     long_description_content_type="text/markdown",
     keywords="python nlp machine-learning deep-learning distributed-computing neural-networks tensor llm",
-    requires_python=">=3.7",
+    requires_python=">=3.8",
     url="https://github.com/VectorInstitute/kaleidoscope-sdk",
     author=["Vector AI Engineering"],
     author_email="ai_engineering@vectorinstitute.ai",
